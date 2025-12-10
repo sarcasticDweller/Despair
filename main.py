@@ -36,7 +36,7 @@ class Deck:
     def add(self, card):
         self.cards.append(card)
 
-    def getCardDataAsLists(self): 
+    def get_card_data_as_lists(self): 
         suits = []
         ranks = []
         for card in self.cards:
@@ -44,16 +44,16 @@ class Deck:
             ranks.append(card.rank)
         return suits, ranks
 
-    def isStraight(self, length = 3):
+    def is_straight(self, length = 3):
         """
-        Docstring for isStraight
+        Docstring for is_straight
         
         :param length: Determines the length of the straight to check for. Typical straights have a length of three.
         :rtype: bool
         """
         if len(self.cards) != length:
             return False
-        suits, ranks = self.getCardDataAsLists()
+        suits, ranks = self.get_card_data_as_lists()
         if len(set(suits)) != 1: # eliminate duplicates and count uniques, of which there should only be one
             return False
         ranks = sorted(set(ranks))
@@ -62,9 +62,9 @@ class Deck:
         # for any given length of sequential integers, you can verify that it is sequential if the difference of the last and first items is equal to one less than the length
         return ranks[-1] - ranks[0] == length - 1
     
-    def isPair(self, length = 2):
+    def is_pair(self, length = 2):
         """
-        Docstring for isPair
+        Docstring for is_pair
         
         :param self: Description
         :param length: The amount of cards to check if is pair. Typical pairs are made up of just two cards
@@ -72,10 +72,10 @@ class Deck:
         """
         if len(self.cards) != length:
             return False
-        _, ranks = self.getCardDataAsLists()
+        _, ranks = self.get_card_data_as_lists()
         return len(set(ranks)) == 1
 
-def standardDeckGenerator():
+def standard_deck_generator():
     cards = []
     for s in suit:
         for r in rank:
@@ -87,39 +87,41 @@ class Demos:
         # how are you supposed to do unit tests? this works for now
         pass
 
-    def straightDemo(self):
+    def straight_demo(self):
         card1, card2, card3, card4, card5 = Card("heart", 1), Card("heart", 2), Card("heart", 3), Card("heart", 4), Card("spade", 5)
         deck1 = Deck([card1, card2, card3])
         print(f"deck1: {deck1}")
-        print(f"is a straight of three? {deck1.isStraight(3)}")
-        print(f"is a straight of four? {deck1.isStraight(4)}")
+        print(f"is a straight of three? {deck1.is_straight(3)}")
+        print(f"is a straight of four? {deck1.is_straight(4)}")
         deck2 = Deck([card1, card3, card4])
         print(f"deck2: {deck2}")
-        print(f"is a straight of three? {deck2.isStraight(3)}")
-        print(f"is a straight of four? {deck2.isStraight(4)}")
+        print(f"is a straight of three? {deck2.is_straight(3)}")
+        print(f"is a straight of four? {deck2.is_straight(4)}")
         deck3 = Deck([card1, card2, card5])
         print(f"deck3: {deck3}")
-        print(f"is a straight of three? {deck3.isStraight(3)}")
-        print(f"is a straight of four? {deck3.isStraight(4)}")
+        print(f"is a straight of three? {deck3.is_straight(3)}")
+        print(f"is a straight of four? {deck3.is_straight(4)}")
     
-    def pairTest(self):
+    def pair_demo(self):
         card1, card2, card3, card4, card5 = Card("heart", 1), Card("spade", 1), Card("heart", 3), Card("heart", 4), Card("spade", 5)
         deck1 = Deck([card1, card2])
         print(f"deck1: {deck1}")
-        print(f"is a pair size 2? {deck1.isPair(2)}")
-        print(f"is a pair size 3? {deck1.isPair(3)}")
+        print(f"is a pair size 2? {deck1.is_pair(2)}")
+        print(f"is a pair size 3? {deck1.is_pair(3)}")
         deck2 = Deck([card3, card4])
         deck1 = Deck([card1, card2])
         print(f"deck1: {deck2}")
-        print(f"is a pair size 2? {deck2.isPair(2)}")
-        print(f"is a pair size 3? {deck2.isPair(3)}")
+        print(f"is a pair size 2? {deck2.is_pair(2)}")
+        print(f"is a pair size 3? {deck2.is_pair(3)}")
 
 
+def game_loop():
+    pass
 
 
 def main():
     demos = Demos()
-    demos.straightDemo()
-    demos.pairTest()
+    demos.straight_demo()
+    demos.pair_demo()
 
 main()
