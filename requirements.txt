@@ -1,1 +1,1 @@
-easyttuimenus==0.1.5
+easyttuimenus==1.0.1

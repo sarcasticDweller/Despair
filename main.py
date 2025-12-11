@@ -1,4 +1,5 @@
-import easyttuimenus, random
+import easyttuimenus as ttui
+import random
 
 suit = ["spade", "heart", "club", "diamond"]
 rank = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
@@ -26,12 +27,18 @@ class Deck:
         for card in self.cards:
             cards += f", {card}"
         return cards
+    def getListOfCardsAsStrings(self):
+        card_strings = []
+        for card in self.cards:
+            card_strings.append(f"{card}")
+        return card_strings
 
     def shuffle(self):
         random.shuffle(self.cards)
 
-    def draw(self):
-        return self.cards.pop(0)
+    def draw(self, count: int = 1):
+        drawn_cards, self.cards = self.cards[:count], self.cards[count:]
+        return drawn_cards
 
     def add(self, card):
         self.cards.append(card)
@@ -116,12 +123,14 @@ class Demos:
 
 
 def game_loop():
-    pass
-
+    deck = Deck(standard_deck_generator())
+    deck.shuffle()
+    deck.draw(len(deck.cards)//2) # starting out with half a deck of cards. ooh, the uncertainty!
+    hand = Deck(deck.draw(5)) # standard hand size is 5. maybe variablelize this later
+    ttui.multiple_choice_menu("Here is your hand", hand.getListOfCardsAsStrings())
 
 def main():
-    demos = Demos()
-    demos.straight_demo()
-    demos.pair_demo()
+    game_loop()
 
-main()
+if __name__ == "__main__":
+    main()
