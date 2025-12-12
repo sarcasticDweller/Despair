@@ -94,9 +94,7 @@ def standard_deck_generator() -> list[Card]:
     return cards
 
 def game_loop() -> None:
-    # constants and other usefuls
     PAUSE_TEXT = "Press enter to continue"
-    # set up game
     played_cards = Deck()
     discard = Deck()
     considered_cards = Deck()
@@ -105,12 +103,17 @@ def game_loop() -> None:
     deck.draw(len(deck.cards)//2) # starting out with half a deck of cards. ooh, the uncertainty!
     hand = Deck(deck.draw(5)) # standard hand size is 5. maybe variablelize this later
 
+    print("Despair: A Game About Debt")
+    input(PAUSE_TEXT)
+    print("How to Play:\n- Select cards by typing the number left of the colon and press enter\n- Select pairs to play pairs\n- Select sequences of three of the same suit to play straights\n- All other cards will be discarded\n- Press \"0\" when you've selected what you want to play to end your turn\n- When you run out of cards in the deck you get one last turn to play cards\n- All discarded cards and cards left in your hand will weigh against you!")
+    input(PAUSE_TEXT)
+
     while len(deck.cards) > 0:
         try: # trying to decide how i want to handle errors on Deck.draw()
             hand.add_several_to_top_of_deck(deck.draw(5-len(hand.cards)))
         except:
             hand.add_several_to_top_of_deck(deck.empty_deck())
-        selected = ttui.multiple_choice_menu(f"Stats\nDiscard: {len(discard.cards)}\nPlayed: {len(played_cards.cards)}\nRemaining cards: {len(deck.cards)}\n\nSelect some cards to play", hand.get_list_of_cards_as_strings())
+        selected = ttui.multiple_choice_menu(f"Despair\n\nStats\nDiscard: {len(discard.cards)}\nPlayed: {len(played_cards.cards)}\nRemaining cards in deck: {len(deck.cards)}\n\nSelect some cards to play", hand.get_list_of_cards_as_strings())
         considered_cards.add_several_to_top_of_deck(hand.draw_several_specific(selected))
         if len(considered_cards.cards) == 2:
             is_pair = considered_cards.is_pair()
