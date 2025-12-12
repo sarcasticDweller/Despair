@@ -32,6 +32,10 @@ class Deck:
         random.shuffle(self.cards)
 
     def draw(self, count: int = 1) -> list[Card]:
+        """
+        if count > len(self.cards):
+            return self.empty_deck() # gracefully empty whole deck of cards. not sure how i feel about this though
+        """
         drawn_cards, self.cards = self.cards[:count], self.cards[count:]
         return drawn_cards
 
@@ -44,9 +48,17 @@ class Deck:
             drawn_cards.append(self.cards[i - 1])
         self.cards = list(set(self.cards).symmetric_difference(drawn_cards)) # removes drawn cards from deck
         return drawn_cards
+    
+    def empty_deck(self) -> list[Card]:
+        cards = self.cards
+        self.cards = []
+        return cards
 
     def add(self, card: Card) -> None:
         self.cards.append(card)
+
+    def add_several_to_top_of_deck(self, cards: list[Card]) -> None:
+        self.cards = self.cards + cards
 
     def get_card_data_as_lists(self) -> tuple[list[str], list[int]]: 
         suits: list[str] = []
@@ -82,18 +94,54 @@ def standard_deck_generator() -> list[Card]:
     return cards
 
 def game_loop() -> None:
+    # constants and other usefuls
+    PAUSE_TEXT = "Press enter to continue"
+    # set up game
+    played_cards = Deck()
+    discard = Deck()
+    considered_cards = Deck()
     deck = Deck(standard_deck_generator())
     deck.shuffle()
     deck.draw(len(deck.cards)//2) # starting out with half a deck of cards. ooh, the uncertainty!
     hand = Deck(deck.draw(5)) # standard hand size is 5. maybe variablelize this later
-    selected = ttui.multiple_choice_menu("Here is your hand", hand.get_list_of_cards_as_strings())
-    considered_cards = Deck(hand.draw_several_specific(selected))
-    if len(considered_cards.cards) == 2:
-        print(considered_cards.is_pair())
-    if len(considered_cards.cards) == 3:
-        print(considered_cards.is_straight())
-    else:
-        print("i hope you wanted to toss those!")
+
+    while len(deck.cards) > 0:
+        try: # trying to decide how i want to handle errors on Deck.draw()
+            hand.add_several_to_top_of_deck(deck.draw(5-len(hand.cards)))
+        except:
+            hand.add_several_to_top_of_deck(deck.empty_deck())
+        selected = ttui.multiple_choice_menu(f"Stats\nDiscard: {len(discard.cards)}\nPlayed: {len(played_cards.cards)}\nRemaining cards: {len(deck.cards)}\n\nSelect some cards to play", hand.get_list_of_cards_as_strings())
+        considered_cards.add_several_to_top_of_deck(hand.draw_several_specific(selected))
+        if len(considered_cards.cards) == 2:
+            is_pair = considered_cards.is_pair()
+            print("checking if pair")
+            if is_pair:
+                print("That's a valid pair!")
+                played_cards.add_several_to_top_of_deck(considered_cards.empty_deck())
+            else:
+                print("i hope you wanted to toss those!")
+                discard.add_several_to_top_of_deck(considered_cards.empty_deck())
+        elif len(considered_cards.cards) == 3:
+            print("checking if straight")
+            is_straight = considered_cards.is_straight()
+            if is_straight:
+                print("That's a valid straight!")
+                played_cards.add_several_to_top_of_deck(considered_cards.empty_deck())
+            else:
+                print("i hope you wanted to toss those!")
+                discard.add_several_to_top_of_deck(considered_cards.empty_deck())
+        else:
+            print("i hope you wanted to toss those!")
+            discard.add_several_to_top_of_deck(considered_cards.empty_deck())
+        input(PAUSE_TEXT)
+    discard.add_several_to_top_of_deck(hand.empty_deck())
+    print("And that's the game!\nYour remaining cards have been discarded.")
+    score_discard = len(discard.cards)
+    score_played = len(played_cards.cards)
+    score = score_played - score_discard
+    print(f"Your final score is {score}.\nBreakdown:\n- {score_played} played cards minus {score_discard} discared cards equals {score}")
+    print("Thanks for playing!")
+    input(PAUSE_TEXT)
 
 
          
