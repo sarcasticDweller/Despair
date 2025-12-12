@@ -30,3 +30,9 @@ jobs:
           pip install -r requirements.txt
       - name: Build Executable
         run: python setup.py build
+
+      - name: Build Executable
+        uses: actions/upload-artifact@v2
+        with:
+          name: windows-executable
+          path: build/
