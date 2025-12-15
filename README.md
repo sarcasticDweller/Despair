@@ -1,3 +1,6 @@
+# Game Direction
+A rummy-inspired card game about debt, consequences, and information.
+
 # Dev Diary
 
 ## 2025-12-12
