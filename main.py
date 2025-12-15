@@ -8,7 +8,8 @@ def text_game_loop() -> None:
     played_cards = playing_cards.Deck()
     discard = playing_cards.Deck()
     considered_cards = playing_cards.Deck()
-    deck = playing_cards.Deck(playing_cards.standard_deck_generator())
+    deck = playing_cards.Deck()
+    deck.make_standard_deck()
     deck.shuffle()
     deck.draw(int(len(deck.cards)*STARTING_DECK_FRACTION)) # starting out with half a deck of cards. ooh, the uncertainty!
     hand = playing_cards.Deck(deck.draw(HAND_SIZE))
@@ -33,7 +34,8 @@ def game_loop() -> None:
     played_cards = playing_cards.Deck()
     discard = playing_cards.Deck()
     considered_cards = playing_cards.Deck()
-    deck = playing_cards.Deck(playing_cards.standard_deck_generator())
+    deck = playing_cards.Deck()
+    deck.make_standard_deck()
     deck.shuffle()
     deck.draw(len(deck.cards)//2) # starting out with half a deck of cards. ooh, the uncertainty!
     hand = playing_cards.Deck(deck.draw(HAND_SIZE)) 
