@@ -1,5 +1,8 @@
 from cx_Freeze import setup, Executable # pyright: ignore[reportUnknownVariableType, reportMissingTypeStubs]
 
+# sticking with cx_Freeze for now but ill likely switch to PyInstaller later
+
+
 build_exe_options = { # pyright: ignore[reportUnknownVariableType]
     "packages": ["easyttuimenus"],
     "excludes": ["tkinter", "unittest", "email", "http", "xmlrpc"],
@@ -8,7 +11,7 @@ build_exe_options = { # pyright: ignore[reportUnknownVariableType]
     "include_msvcr": True
 } # what do you do exactly?
 
-base = None # console app (use "WIN32GUI" on Windows GUI apps)
+base = None 
 
 setup(
     name = "Despair",
@@ -16,7 +19,7 @@ setup(
     description = "A Game About Debt",
     options = {"build_exe": build_exe_options},
     executables = [Executable(
-        "main.py",
+        "src/main.py",
         base = base,
         target_name = "despair"
     )]

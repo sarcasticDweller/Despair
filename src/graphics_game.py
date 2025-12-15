@@ -1,8 +1,18 @@
 import pygame  # pyright: ignore[reportMissingTypeStubs]
 from constants import *
 
-def graphics_game_loop() -> None:
+def _update(dt, updatable) -> None:
+    for sprite in updatable:
+        sprite.update(dt)
+
+def _draw(screen, drawable) -> None:
+    for sprite in drawable:
+        sprite.draw(screen)
+    pygame.display.flip()
+
+def main() -> None:
     # Initialize Pygame
+    print("Starting game...")
     pygame.init()
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT)) # pyright: ignore[reportUnusedVariable]
     pygame.display.set_caption(WINDOW_CAPTION)
@@ -18,13 +28,11 @@ def graphics_game_loop() -> None:
     # Initialize test sprite
     heart = pygame.image.load("assets/heart.png")
 
-
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return
         # draw the heart
-        screen.fill((0, 0, 0))  # Clear the screen with black
-        screen.blit(heart, (WINDOW_WIDTH // 2 - heart.get_width() // 2, WINDOW_HEIGHT // 2 - heart.get_height() // 2))
-        pygame.display.flip()
+        _update(dt, updatable)
+        _draw(screen, drawable)
