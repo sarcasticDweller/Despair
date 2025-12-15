@@ -2,6 +2,7 @@
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 800
 WINDOW_CAPTION = "Despair: A Game About Debt"
+FPS = 60
 
 # Game Rules
 HAND_SIZE = 5

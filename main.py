@@ -6,6 +6,14 @@ def graphics_game_loop() -> None:
     pygame.init()
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     pygame.display.set_caption(WINDOW_CAPTION)
+    clock = pygame.time.Clock()
+    dt = 0
+    fps = FPS
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                return
 
 def text_game_loop() -> None:
     PAUSE_TEXT = "Press enter to continue"
