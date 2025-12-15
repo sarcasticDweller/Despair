@@ -8,8 +8,7 @@ def text_game_loop() -> None:
     played_cards = playing_cards.Deck()
     discard = playing_cards.Deck()
     considered_cards = playing_cards.Deck()
-    deck = playing_cards.Deck()
-    deck.make_standard_deck()
+    deck = playing_cards.StandardDeck()
     deck.shuffle()
     deck.draw(int(len(deck.cards)*STARTING_DECK_FRACTION)) # starting out with half a deck of cards. ooh, the uncertainty!
     hand = playing_cards.Deck(deck.draw(HAND_SIZE))
@@ -26,16 +25,27 @@ def text_game_loop() -> None:
         
         selected = ttui.multiple_choice_menu(f"Despair\n\nStats\nDiscard: {len(discard.cards)}\nPlayed: {len(played_cards.cards)}\nRemaining cards in deck: {len(deck.cards)}\n\nSelect some cards to play", hand.get_list_of_cards_as_strings())
         considered_cards.add_several_to_top_of_deck(hand.draw_several_specific(selected))
+        contains_pairs, pairs = considered_cards.contains_pairs()
+        contains_straights, straights = considered_cards.contains_straights()
+        def validate_and_remove(valid: bool, card_nest: list[list[playing_cards.Card]]) -> bool:
+            """Returns `valid` parameter as a way to check if the function executed successfully. If so, removes the played cards from `considered_cards` and adds them to `played_cards`."""
+            if valid:
+                for cards in card_nest:
+                    played_cards.add_several_to_top_of_deck(cards)
+                    for card in cards:
+                        considered_cards.remove_specific(card)
+            return valid
+        if validate_and_remove(contains_pairs, pairs):
+            print("You played pairs!")
+        if validate_and_remove(contains_straights, straights):
+            print("You played straights!")
         
-
-
 def game_loop() -> None:
     PAUSE_TEXT = "Press enter to continue"
     played_cards = playing_cards.Deck()
     discard = playing_cards.Deck()
     considered_cards = playing_cards.Deck()
-    deck = playing_cards.Deck()
-    deck.make_standard_deck()
+    deck = playing_cards.StandardDeck()
     deck.shuffle()
     deck.draw(len(deck.cards)//2) # starting out with half a deck of cards. ooh, the uncertainty!
     hand = playing_cards.Deck(deck.draw(HAND_SIZE)) 
