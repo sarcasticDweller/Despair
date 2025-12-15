@@ -1,5 +1,6 @@
 import easyttuimenus as ttui  # pyright: ignore[reportMissingTypeStubs]
 import playing_cards # pyright: ignore[reportMissingTypeStubs]
+from constants import *
 
 def game_loop() -> None:
     PAUSE_TEXT = "Press enter to continue"
@@ -9,7 +10,7 @@ def game_loop() -> None:
     deck = playing_cards.Deck(playing_cards.standard_deck_generator())
     deck.shuffle()
     deck.draw(len(deck.cards)//2) # starting out with half a deck of cards. ooh, the uncertainty!
-    hand = playing_cards.Deck(deck.draw(5)) # standard hand size is 5. maybe variablelize this later
+    hand = playing_cards.Deck(deck.draw(HAND_SIZE)) 
 
     print("Despair: A Game About Debt")
     input(PAUSE_TEXT)
@@ -18,7 +19,7 @@ def game_loop() -> None:
 
     while len(deck.cards) > 0:
         try: # trying to decide how i want to handle errors on Deck.draw()
-            hand.add_several_to_top_of_deck(deck.draw(5-len(hand.cards)))
+            hand.add_several_to_top_of_deck(deck.draw(HAND_SIZE-len(hand.cards)))
         except:
             hand.add_several_to_top_of_deck(deck.empty_deck())
         selected = ttui.multiple_choice_menu(f"Despair\n\nStats\nDiscard: {len(discard.cards)}\nPlayed: {len(played_cards.cards)}\nRemaining cards in deck: {len(deck.cards)}\n\nSelect some cards to play", hand.get_list_of_cards_as_strings())
