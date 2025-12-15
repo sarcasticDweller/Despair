@@ -4,11 +4,11 @@ import pygame, argparse, playing_cards # pyright: ignore[reportMissingTypeStubs]
 
 def graphics_game_loop() -> None:
     pygame.init()
-    screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+    screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT)) # pyright: ignore[reportUnusedVariable]
     pygame.display.set_caption(WINDOW_CAPTION)
-    clock = pygame.time.Clock()
-    dt = 0
-    fps = FPS
+    clock = pygame.time.Clock() # pyright: ignore[reportUnusedVariable]
+    dt = 0 # pyright: ignore[reportUnusedVariable]
+    fps = FPS  # pyright: ignore[reportUnusedVariable]
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -63,8 +63,9 @@ def text_game_loop() -> None:
     score_discard = len(discard.cards)
     score_played = len(played_cards.cards)
     score = score_played - score_discard
+    result_message = "Good job!" if score > 0 else "Better luck next time!"
     print("And that's the game!\nYour remaining cards have been discarded.")
-    print(f"Your final score is {score}. {"Good job!" if score > 0 else "Better luck next time!"}\nBreakdown:\n- {score_played} played cards\n- Minus {score_discard} discared cards\n- Equals {score} points")
+    print(f"Your final score is {score}. {result_message}\nBreakdown:\n- {score_played} played cards\n- Minus {score_discard} discared cards\n- Equals {score} points")
     print("Thanks for playing!")
     pause()
 
