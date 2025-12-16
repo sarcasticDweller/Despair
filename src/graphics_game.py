@@ -5,7 +5,7 @@ def _update(dt, updatable) -> None:
     for sprite in updatable:
         sprite.update(dt)
 
-def _draw(screen, drawable) -> None:
+def _draw(screen: pygame.Surface, drawable) -> None:
     for sprite in drawable:
         sprite.draw(screen)
     pygame.display.flip()
