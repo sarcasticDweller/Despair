@@ -1,6 +1,6 @@
 import argparse # pyright: ignore[reportMissingTypeStubs]
 from text_game import text_game_loop
-from graphics_game import graphics_game_loop
+from graphics_game import main as graphics_game_loop
 
 def main(mode: str) -> None:
     if mode == "graphics":
