@@ -1,15 +1,6 @@
 import pygame
 import playing_cards as pc
 
-# fun fact: you can do a lot of pygame testing straight from the terminal. who needs and X server when you have a terminal!
-
-class Sprite(pygame.sprite.Sprite):
-    def __init__(self, image_path: str, width: int, height: int, x: int = 0, y: int = 0):
-        super().__init__()
-        self.image = pygame.image.load(image_path)
-        self.rect = self.image.get_rect()
-        
-
 # constants, to move to constants file *later*
 SUIT_PATHS = {
     pc.Suit.SPADE: "../assets/card/devsprite_spade.png",
@@ -41,4 +32,3 @@ class CardSprite(pygame.sprite.Sprite):
     def flip_card(self) -> None:
         self.facing_up = not self.facing_up
     
-
