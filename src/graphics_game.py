@@ -1,38 +1,45 @@
 import pygame  # pyright: ignore[reportMissingTypeStubs]
 from constants import *
 
-def _update(dt, updatable) -> None:
-    for sprite in updatable:
-        sprite.update(dt)
+# oh no, i dont know what im doing! unfortunately, i have to write this in a github codespace and build it for a windows environment with no pygame installed locally before i can test things, so development is going to be slow and painful. happy happy joy joy.
 
-def _draw(screen: pygame.Surface, drawable) -> None:
-    for sprite in drawable:
-        sprite.draw(screen)
+class aaah: # type: i dont heckin know
+    pass
+
+def _update(dt: int, sprites: aaah) -> None: # trying to type "sprites" is absolutely breaking me
+
+    # should hold collider logic too, eh?
+    for sprite in sprites:
+        sprite.update(dt)
+    
+def _draw(surface: pygame.Surface, sprites: aaah) -> None:
+    surface.fill(BG_COLOR)
+    for sprite in sprites:
+        sprite.draw(surface)
     pygame.display.flip()
 
 def main() -> None:
-    # Initialize Pygame
-    print("Starting game...")
+    # initialize pygame
     pygame.init()
-    screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT)) # pyright: ignore[reportUnusedVariable]
+    window: pygame.Surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT)) # gonna add extra type hints to help learn pygame (and to make pyright happy)
     pygame.display.set_caption(WINDOW_CAPTION)
-    clock = pygame.time.Clock() # pyright: ignore[reportUnusedVariable]
-    dt = 0 # pyright: ignore[reportUnusedVariable]
-    fps = FPS  # pyright: ignore[reportUnusedVariable]
 
-    # Initialize sprite groups
-    updatable = pygame.sprite.Group()  # pyright: ignore[reportUnknownVariableType, reportUnusedVariable]
-    drawable = pygame.sprite.Group()  # pyright: ignore[reportUnknownVariableType, reportUnusedVariable]
-    player_cards = pygame.sprite.Group()  # pyright: ignore[reportUnknownVariableType, reportUnusedVariable]
+    # initialize clock
+    clock = pygame.time.Clock()
+    dt = 0
+    fps = FPS
 
-    # Initialize test sprite
-    heart = pygame.image.load("assets/heart.png")
+    # initialize groups, with questionable typing
+    updatables = pygame.sprite.Group()
+    drawables = pygame.sprite.Group()
 
+    # game loop
     while True:
         for event in pygame.event.get():
+            # makes the close button work
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return
-        # draw the heart
-        _update(dt, updatable)
-        _draw(screen, drawable)
+        dt = clock.tick(fps) / 1000 # magic number converts to seconds
+        _update(dt, updatables)
+        _draw(window, drawables)
