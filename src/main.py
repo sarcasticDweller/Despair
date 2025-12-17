@@ -1,5 +1,5 @@
 import argparse # pyright: ignore[reportMissingTypeStubs]
-from text_game import text_game_loop
+from text_game import text_game_loop # why cant i see you???
 from graphics_game import main as graphics_game_loop
 
 def main(mode: str) -> None:
