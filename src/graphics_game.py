@@ -48,5 +48,4 @@ def main() -> None:
                 pygame.quit()
                 return
         dt = clock.tick(fps) / 1000 # magic number converts to seconds
-        _update(dt, updatables)
-        _draw(window, drawables)
+        drawables.draw(window)

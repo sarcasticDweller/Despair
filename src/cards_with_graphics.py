@@ -1,15 +1,9 @@
 import pygame
 import src.playing_cards as pc
+from src.constants import SUIT_PATHS, CARD_PATHS
 
 # constants, to move to constants file *later*
 
-# these paths are causing errors depending on where theyre run from. im starting to suspect that this is a bad way to manage pathing
-SUIT_PATHS = {
-    pc.Suit.SPADE: "../assets/card/devsprite_spade.png",
-    pc.Suit.HEART: "../assets/card/devsprite_heart.png",
-    pc.Suit.CLUB: "../assets/card/devsprite_club.png",
-    pc.Suit.DIAMOND: "../assets/card/devsprite_diamond.png"
-}
 
 class CardSprite(pygame.sprite.Sprite):
 
@@ -23,8 +17,8 @@ class CardSprite(pygame.sprite.Sprite):
         self.suit_image.set_colorkey((255, 255, 255)) # write code that works before you code that's good
 
         # create the card body
-        self.card_image_front: pygame.Surface = pygame.image.load("../assets/card/devsprite_card_front.png")
-        self.card_image_back: pygame.Surface = pygame.image.load("../assets/card/devsprite_card_back.png")
+        self.card_image_front: pygame.Surface = pygame.image.load(CARD_PATHS["front"])
+        self.card_image_back: pygame.Surface = pygame.image.load(CARD_PATHS["back"])
         # okay, i have images, now where to shove them...
         if self.facing_up:
             self.card_image = self.card_image_front
