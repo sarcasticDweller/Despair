@@ -1,7 +1,6 @@
 import pygame  # pyright: ignore[reportMissingTypeStubs]
-from constants import *
-import cards_with_graphics
-import playing_cards
+from src.constants import *
+import src.cards_with_graphics
 
 # oh no, i dont know what im doing! unfortunately, i have to write this in a github codespace and build it for a windows environment with no pygame installed locally before i can test things, so development is going to be slow and painful. happy happy joy joy.
 
@@ -38,7 +37,7 @@ def main() -> None:
     drawables = pygame.sprite.Group()
 
     # test card
-    card = cards_with_graphics.CardSprite(STOCK_CARD)
+    card = src.cards_with_graphics.CardSprite(STOCK_CARD)
     drawables.add(card)
 
     # game loop

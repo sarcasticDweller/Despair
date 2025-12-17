@@ -1,8 +1,8 @@
 import unittest, sys, os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets")))
-import cards_with_graphics
-import playing_cards
+import src.cards_with_graphics as cards_with_graphics
+import src.playing_cards as playing_cards
 
 STOCK_CARD = cards_with_graphics.CardSprite(
     playing_cards.Card(

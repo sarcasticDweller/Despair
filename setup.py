@@ -4,7 +4,7 @@ from cx_Freeze import setup, Executable # pyright: ignore[reportUnknownVariableT
 
 
 build_exe_options = { # pyright: ignore[reportUnknownVariableType]
-    "packages": ["easyttuimenus"],
+    "packages": ["src", "easyttuimenus"], # at a loss as to whether or not these are necessary
     "excludes": ["tkinter", "unittest", "email", "http", "xmlrpc"],
     "include_files": [("assets/", "assets/")], 
     "optimize": 2,

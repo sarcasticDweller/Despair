@@ -1,4 +1,4 @@
-import playing_cards as pc
+import src.playing_cards as pc
 # Game window
 WINDOW_WIDTH = 600
 WINDOW_HEIGHT = 800

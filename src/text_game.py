@@ -1,6 +1,6 @@
 import easyttuimenus as ttui  # pyright: ignore[reportMissingTypeStubs]
-from constants import *
-import playing_cards
+from src.constants import *
+import src.playing_cards as playing_cards
 
 def text_game_loop() -> None:
     PAUSE_TEXT = "Press enter to continue"

@@ -1,12 +1,12 @@
 import argparse # pyright: ignore[reportMissingTypeStubs]
-from text_game import text_game_loop # why cant i see you???
-from graphics_game import main as graphics_game_loop
+import src.text_game
+import src.graphics_game
 
 def main(mode: str) -> None:
     if mode == "graphics":
-        graphics_game_loop()
+        src.graphics_game.main()
     if mode == "text":
-        text_game_loop()
+        src.text_game.text_game_loop()
     return
 
 if __name__ == "__main__":

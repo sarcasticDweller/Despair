@@ -1,5 +1,5 @@
 import pygame
-import playing_cards as pc
+import src.playing_cards as pc
 
 # constants, to move to constants file *later*
 
