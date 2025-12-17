@@ -1,7 +1,11 @@
 import pygame  # pyright: ignore[reportMissingTypeStubs]
 from constants import *
+import cards_with_graphics
+import playing_cards
 
 # oh no, i dont know what im doing! unfortunately, i have to write this in a github codespace and build it for a windows environment with no pygame installed locally before i can test things, so development is going to be slow and painful. happy happy joy joy.
+
+# okay, pyright is incredibly upset, but i need to test *something*
 
 class aaah: # type: i dont heckin know
     pass
@@ -12,7 +16,7 @@ def _update(dt: int, sprites: aaah) -> None: # trying to type "sprites" is absol
     for sprite in sprites:
         sprite.update(dt)
     
-def _draw(surface: pygame.Surface, sprites: aaah) -> None:
+def _draw(surface: pygame.Surface, sprites) -> None:
     surface.fill(BG_COLOR)
     for sprite in sprites:
         sprite.draw(surface)
@@ -32,6 +36,10 @@ def main() -> None:
     # initialize groups, with questionable typing
     updatables = pygame.sprite.Group()
     drawables = pygame.sprite.Group()
+
+    # test card
+    card = cards_with_graphics.CardSprite(STOCK_CARD)
+    drawables.add(card)
 
     # game loop
     while True:

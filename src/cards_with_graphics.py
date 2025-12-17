@@ -12,14 +12,15 @@ SUIT_PATHS = {
 }
 
 class CardSprite(pygame.sprite.Sprite):
+
     def __init__(self, card: pc.Card, facing_up: bool = False):
         super().__init__()
         self.facing_up = facing_up
         self.card_data = card
 
         # create the suit
-        self.suit_image: pygame.Surface = pygame.image.load(SUIT_PATHS[card.suit]) # will throw an error if it receives a bad suit (or by extension a bad card)
-        self.suit_rect: pygame.Rect = self.suit_image.get_rect()
+        self.suit_image: pygame.Surface = pygame.image.load(SUIT_PATHS[card.suit]).convert() 
+        self.suit_image.set_colorkey((255, 255, 255)) # write code that works before you code that's good
 
         # create the card body
         self.card_image_front: pygame.Surface = pygame.image.load("assets/card/devsprite_card_front.png")
@@ -29,9 +30,18 @@ class CardSprite(pygame.sprite.Sprite):
             self.card_image = self.card_image_front
         else:
             self.card_image = self.card_image_back
-        self.card_rect = self.card_image.get_rect()
+        
+        # necessary sprite attributes
+        self.image = self.layer_images_and_return_single_sprite([self.card_image, self.suit_image])
+        self.rect = self.image.get_rect()
 
     
     def flip_card(self) -> None:
         self.facing_up = not self.facing_up
     
+    def layer_images_and_return_single_sprite(self, images: list[pygame.Surface]) -> pygame.Surface:
+        # layer your images later
+        base_image = images[0]
+        for img in images[1:]:
+            base_image.blit(img, (0, 0)) # you "blit" images to a surface, which can be drawn later. i *think*
+        return base_image
