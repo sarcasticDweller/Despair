@@ -1,4 +1,5 @@
 import unittest, sys, os, pygame
+# is this all even necessary?
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../src")))
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets")))
 import src.cards_with_graphics as cards_with_graphics

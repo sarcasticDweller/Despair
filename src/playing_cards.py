@@ -152,6 +152,8 @@ class Deck:
     def contains_straights(self, size_of_straight: int = 3) -> tuple[bool, list[list[Card]]]:
         """Checks the deck for straights of a given length. Supports three-card straights, four-card straights, etc.
 
+        Bug detected! Squash me: ranks ACE, TWO, NINE resolves as a straight when suit is the same
+
         :param size_of_straight: The length of the straights to check for. Defaults to 3 to search for standard straights.
         :type size_of_straight: int (optional)
         :return: A tuple containing:
@@ -162,36 +164,30 @@ class Deck:
 
         suits_dict: dict[Suit, list[Card]] = {}
         straights: list[list[Card]] = []
+
+        # group by suit
         for card in self.cards:
             if card.suit not in suits_dict:
                 suits_dict[card.suit] = []
-            if card not in suits_dict[card.suit]:
-                suits_dict[card.suit].append(card)
+            suits_dict[card.suit].append(card) # always add the card to respect larger card decks
         
         for suit in suits_dict:
             suited_cards = sorted(suits_dict[suit])
 
-            # happy case: suited_cards contains only cards in the straight
-            # neutral case: suited_cards contains a straight *somewhere*
-            # annoyed case: suited_cards contains *multiple* straights
-            # sad case: no straight at all :(
-
             # happy case first
             if len(suited_cards) == size_of_straight and suited_cards[-1].rank - suited_cards[0].rank == size_of_straight - 1:
                 straights.append(suited_cards)
-                continue
+                continue # to next suit
 
-            # neutral and annoyed cases
-            rank_values = [int(card.rank) for card in suited_cards]
-            found_sequences = _find_unique_sequences(rank_values, size_of_straight)
+            # convert cards to list of ints for simpler analysis
+            card_ranks = [int(card.rank) for card in suited_cards]
+            found_sequences: list[list[int]] = find_unique_sequences(card_ranks, size_of_straight)
+
+            # convert found_sequences back into list[list[card]]
             for sequence in found_sequences:
-                straight_cards: list[Card] = []
-                for rank in sequence:
-                    for card in suited_cards:
-                        if card.rank == rank:
-                            straight_cards.append(card)
-                            break
+                straight_cards = [card for rank in sequence for card in suited_cards if card.rank == rank]
                 straights.append(straight_cards)
+
 
         return len(straights) > 0, straights
     
@@ -199,41 +195,22 @@ class StandardDeck(Deck):
     def __init__(self) -> None:
         super().__init__(_standard_deck_generator())
 
-def _find_unique_sequences(master_list: list[int], x: int) -> list[list[int]]:
-    # vibe-coding time. im sorry dad
-    # Convert to a set for O(1) lookups and remove duplicates from the master list
-    unique_numbers = set(master_list)
+def find_unique_sequences(master_sequence: list[int], sequence_length: int) -> list[list[int]]:
+    """Takes a list of integers and returns a two-dimensional list of consecutive sequences of `sequence_length` length found in the list of integers."""
+    ms_in_order = sorted(master_sequence)
+    working_sequence: list[int] = []
     sequences: list[list[int]] = []
-    # Sort the unique numbers to ensure sequential checking
-    sorted_numbers = sorted(unique_numbers)
-    i = 0
-    while i <= len(sorted_numbers) - x:  # Loop until we can find a full sequence
-        current_sequence: list[int] = []
-        # Form a sequence starting from the current index
-        for j in range(x):
-            current_sequence.append(sorted_numbers[i + j])
-        # Add sequence to the results
-        sequences.append(current_sequence)
-        # Move the index forward by x to get the next unique sequence
-        i += x  
+    for i in range(len(master_sequence)):
+        if len(working_sequence) == 0:
+            working_sequence.append(ms_in_order[i])
+            continue
+        if ms_in_order[i] - 1 == working_sequence[-1]:
+            working_sequence.append(ms_in_order[i])
+        if len(working_sequence) == sequence_length:
+            sequences.append(working_sequence)
+            working_sequence = []
+
     return sequences
 
 def _standard_deck_generator() -> list[Card]:
-    cards: list[Card] = []
-    for s in Suit:
-        for r in Rank:
-            cards.append(Card(s, r))
-    return cards
-
-if __name__ == "__main__":
-    deck = StandardDeck()
-    print("Testing 52 card deck")
-    print(f"Contains pairs: {deck.contains_pairs()}")
-    print(f"Contains straights: {deck.contains_straights()}")
-    deck2 = Deck([
-        Card(Suit.SPADE, Rank.ACE),
-        Card(Suit.SPADE, Rank.TWO)
-        ])
-    print(deck2)
-    print(deck2.contains_straights())
-    print(deck2.contains_straights(2))
+    return [Card(s, r) for s in Suit for r in Rank]
