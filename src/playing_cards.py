@@ -152,8 +152,6 @@ class Deck:
     def contains_straights(self, size_of_straight: int = 3) -> tuple[bool, list[list[Card]]]:
         """Checks the deck for straights of a given length. Supports three-card straights, four-card straights, etc.
 
-        Bug detected! Squash me: ranks ACE, TWO, NINE resolves as a straight when suit is the same
-
         :param size_of_straight: The length of the straights to check for. Defaults to 3 to search for standard straights.
         :type size_of_straight: int (optional)
         :return: A tuple containing:
