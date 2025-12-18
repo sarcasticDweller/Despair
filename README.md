@@ -11,6 +11,8 @@ Okay, solution: I just won't test pygame visuals until I'm at a workstation that
 
 **GOOD NEWS EVERYONE!!** Who needs ASCII when you can just launch a noVNC server? Now we're cooking with grease!
 
+**BAD NEWS EVERYONE!!** Straights aren't calculating properly. Must do unit testing!!
+
 ## 2025-12-17
 
 Progress has been made, we have sucessfully built the code and had it run without exploding. Hooray!

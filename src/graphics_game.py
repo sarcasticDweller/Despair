@@ -21,15 +21,21 @@ def main() -> None:
     drawables = pygame.sprite.Group() # pyright: ignore[reportUnknownVariableType]
 
     # test card
-    card = src.cards_with_graphics.CardSprite(STOCK_CARD)
+    card = src.cards_with_graphics.CardSprite(STOCK_CARD, True)
+    print("Card initialized:", card)
     drawables.add(card) # pyright: ignore[reportUnknownMemberType]
+    updatables.add(card) # pyright: ignore[reportUnknownMemberType]
 
-    # game loop
+    # prototype game loop
     while True:
         for event in pygame.event.get():
             # makes the close button work
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                card.flip_card()
         dt = clock.tick(fps) / 1000 # pyright: ignore[reportUnusedVariable] # magic number converts to seconds
         drawables.draw(window)
+        updatables.update(dt)
+        pygame.display.flip()
