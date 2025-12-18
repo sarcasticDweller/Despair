@@ -1,6 +1,17 @@
 # Game Direction
 A rummy-inspired card game about debt, consequences, and information.
 
+# Dev Environment Setup
+
+Run `setup_dev_environment.sh`.
+
+If in a Codespace: 
+1. Start an x server by running `start-gui.sh`. 
+2. Navigate over to the "Ports" tab in the bottom menu and find port "6080"
+3. Set port 6080 to public
+4. Open that link in the browser!
+5. Click on `vnc_auto.html@` from the list of files to open the noVNC server
+
 # Dev Diary
 
 ## 2025-12-18
@@ -12,6 +23,8 @@ Okay, solution: I just won't test pygame visuals until I'm at a workstation that
 **GOOD NEWS EVERYONE!!** Who needs ASCII when you can just launch a noVNC server? Now we're cooking with grease!
 
 **BAD NEWS EVERYONE!!** Straights aren't calculating properly. Must do unit testing!!
+
+**GOOD NEWS EVERYONE!!** There's no more bold-text bearing news. 
 
 ## 2025-12-17
 
