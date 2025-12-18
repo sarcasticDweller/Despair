@@ -3,6 +3,10 @@ A rummy-inspired card game about debt, consequences, and information.
 
 # Dev Diary
 
+## 2025-12-18
+
+Okay, solution: I just won't test pygame visuals until I'm at a workstation that I can cross-compile code on (or just not bother at all). It's definitely got the vibes of giving up, but I've had it I tell you!
+
 ## 2025-12-17
 
 Progress has been made, we have sucessfully built the code and had it run without exploding. Hooray!
