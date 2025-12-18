@@ -7,6 +7,10 @@ A rummy-inspired card game about debt, consequences, and information.
 
 Okay, solution: I just won't test pygame visuals until I'm at a workstation that I can cross-compile code on (or just not bother at all). It's definitely got the vibes of giving up, but I've had it I tell you!
 
+~~Here's a thought: What if I just *don't* build it around Pygame? Just make an ASCII game instead!~~
+
+**GOOD NEWS EVERYONE!!** Who needs ASCII when you can just launch a noVNC server? Now we're cooking with grease!
+
 ## 2025-12-17
 
 Progress has been made, we have sucessfully built the code and had it run without exploding. Hooray!
