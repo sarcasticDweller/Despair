@@ -4,22 +4,6 @@ import src.cards_with_graphics
 
 # oh no, i dont know what im doing! unfortunately, i have to write this in a github codespace and build it for a windows environment with no pygame installed locally before i can test things, so development is going to be slow and painful. happy happy joy joy.
 
-# okay, pyright is incredibly upset, but i need to test *something*
-
-class aaah: # type: i dont heckin know
-    pass
-
-def _update(dt: int, sprites: aaah) -> None: # trying to type "sprites" is absolutely breaking me
-
-    # should hold collider logic too, eh?
-    for sprite in sprites:
-        sprite.update(dt)
-    
-def _draw(surface: pygame.Surface, sprites) -> None:
-    surface.fill(BG_COLOR)
-    for sprite in sprites:
-        sprite.draw(surface)
-    pygame.display.flip()
 
 def main() -> None:
     # initialize pygame
@@ -29,16 +13,16 @@ def main() -> None:
 
     # initialize clock
     clock = pygame.time.Clock()
-    dt = 0
+    dt = 0 # pyright: ignore[reportUnusedVariable]
     fps = FPS
 
     # initialize groups, with questionable typing
-    updatables = pygame.sprite.Group()
-    drawables = pygame.sprite.Group()
+    updatables = pygame.sprite.Group() # pyright: ignore[reportUnknownVariableType, reportUnusedVariable]
+    drawables = pygame.sprite.Group() # pyright: ignore[reportUnknownVariableType]
 
     # test card
     card = src.cards_with_graphics.CardSprite(STOCK_CARD)
-    drawables.add(card)
+    drawables.add(card) # pyright: ignore[reportUnknownMemberType]
 
     # game loop
     while True:
@@ -47,5 +31,5 @@ def main() -> None:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 return
-        dt = clock.tick(fps) / 1000 # magic number converts to seconds
+        dt = clock.tick(fps) / 1000 # pyright: ignore[reportUnusedVariable] # magic number converts to seconds
         drawables.draw(window)
