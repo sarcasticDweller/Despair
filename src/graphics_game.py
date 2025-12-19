@@ -20,11 +20,14 @@ def main() -> None:
     updatables = pygame.sprite.Group() # pyright: ignore[reportUnknownVariableType, reportUnusedVariable]
     drawables = pygame.sprite.Group() # pyright: ignore[reportUnknownVariableType]
 
-    # test card
-    card = src.cards_with_graphics.CardSprite(STOCK_CARD, True)
-    print("Card initialized:", card)
-    drawables.add(card) # pyright: ignore[reportUnknownMemberType]
-    updatables.add(card) # pyright: ignore[reportUnknownMemberType]
+    card1 = src.cards_with_graphics.CardSprite(STOCK_CARD, True)
+    card2 = src.cards_with_graphics.CardSprite(STOCK_CARD, True)
+    updatables.add(card1) # pyright: ignore[reportUnknownMemberType]
+    # test hand
+    hand = src.cards_with_graphics.HandOfCards((100, 100), [card1, card2])
+    #updatables.add(hand) # pyright: ignore[reportUnknownMemberType]
+    drawables.add(hand) # pyright: ignore[reportUnknownMemberType]
+
 
     # prototype game loop
     while True:
@@ -34,7 +37,7 @@ def main() -> None:
                 pygame.quit()
                 return
             if event.type == pygame.MOUSEBUTTONDOWN:
-                card.flip_card()
+                card1.flip_card()
         dt = clock.tick(fps) / 1000 # pyright: ignore[reportUnusedVariable] # magic number converts to seconds
         drawables.draw(window)
         updatables.update(dt)

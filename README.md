@@ -3,7 +3,7 @@ A rummy-inspired card game about debt, consequences, and information.
 
 # Dev Environment Setup
 
-Run `setup_dev_environment.sh`.
+~~Run `setup_dev_environment.sh`.~~
 
 If in a Codespace: 
 1. Start an x server by running `start-gui.sh`. 
@@ -13,6 +13,11 @@ If in a Codespace:
 5. Click on `vnc_auto.html@` from the list of files to open the noVNC server
 
 # Dev Diary
+
+## 2025-12-19
+
+This has been an uphill battle the whole way. Now, `start_gui.sh` no longer starts a functional noVNC server. Sometimes, manually running `x11vnc -display :1 -nopw -forever -shared -rfbport 5900` does the trick.
+
 
 ## 2025-12-18
 

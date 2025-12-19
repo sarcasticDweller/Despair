@@ -44,14 +44,14 @@ class CardSprite(pygame.sprite.Sprite):
         suit = self.suit_image
         rank = self.rank_image
         corner_slots = {
-            "suit": {
+            suit: {
                 "top": (0, 0),
                 "bottom": (
                     base.get_width() - suit.get_width(),
                     base.get_height() - suit.get_height()
                 )
             },
-            "rank": {
+            rank: {
                 "top": (suit.get_width(), 0),
                 "bottom": (
                     base.get_width() - suit.get_width() - rank.get_width(), 
@@ -59,25 +59,42 @@ class CardSprite(pygame.sprite.Sprite):
                 )
             }
         }
-
-        base.blit(suit, corner_slots["suit"]["top"])
-        base.blit(suit, corner_slots["suit"]["bottom"])
-        base.blit(rank, corner_slots["rank"]["top"])
-        base.blit(rank, corner_slots["rank"]["bottom"])
+        base.blits((
+            (suit, corner_slots[suit]["top"]),
+            (suit, corner_slots[suit]["bottom"]),
+            (rank, corner_slots[rank]["top"]),
+            (rank, corner_slots[rank]["bottom"])
+        ))
 
         return base
 
 class HandOfCards(pygame.sprite.Sprite):
-    """Holds x cards and controls how to render them based on its dimensions. Attempts to render all cards possible"""
+    """Holds x cards and controls how to render them based on its dimensions. Attempts to render all cards possible. Hey, shouldn't this be a pygame.sprite.Group?"""
 
     def __init__(self, rect: tuple[int, int], cards: list[CardSprite]):
-        self.cards = cards
+        super().__init__()
+        self.cards = cards # shouldnt i be a deck? is that even necessary?
         self.backdrop = pygame.Surface(rect)
+        self.space = 10 # blank space to render between cards
+        self.backdrop_and_cards = self.blit_cards_to_hand()
 
         # necessary sprite atributes
-        self.image: pygame.Surface = pygame.Surface((0, 0))
+        self.image: pygame.Surface = self.backdrop_and_cards
         self.rect = self.image.get_rect()
 
     def update(self):
-        # blit all of self.cards to self.image
         pass
+    
+    def blit_cards_to_hand(self) -> pygame.Surface:
+        image = self.backdrop
+        x_coord = 0
+        y_coord = 0
+        for card in self.cards:
+            image.blit(card.image, (
+                x_coord,
+                y_coord
+            ))
+            x_coord += card.image.get_width() + self.space
+
+        return image
+
