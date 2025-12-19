@@ -43,5 +43,6 @@ RANK_PATHS = {
 
 CARD_PATHS = {
     "front": "assets/card/devsprite_card_front.png",
-    "back": "assets/card/devsprite_card_back.png"
+    "back": "assets/card/devsprite_card_back.png",
+    "error": "assets/card/devsprite_card_error.png"
 }

@@ -3,14 +3,29 @@ import src.playing_cards as pc
 from src.constants import SUIT_PATHS, CARD_PATHS, RANK_PATHS, COLOR_KEY
 from src.gopher import resource_path
 
+
 def resolve_img(path: str) -> pygame.Surface:  
     img: pygame.Surface = pygame.image.load(resource_path(path)).convert() 
     img.set_colorkey(COLOR_KEY)
     return img
 
-class CardSprite(pygame.sprite.Sprite):
+# some lessons we're learning: pyright and pygame do NOT get along. its going to be a challenge to not let this deter me
 
-    def __init__(self, card: pc.Card, facing_up: bool = False):
+class Prototype(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.Surface((1, 1))
+        self.rect = self.image.get_rect()
+    
+    def move_rect(self, x: int = 0, y: int = 0) -> None:
+        self.rect.x += x
+        self.rect.y += y
+    
+    def update(self, dt: float):
+        self.move_rect(1, 1)
+
+class CardSprite(Prototype):
+    def __init__(self, card: pc.Card, coords: tuple[int, int], facing_up: bool = True) -> None: 
         super().__init__()
         self.facing_up = facing_up
         self.card_data = card
@@ -25,6 +40,7 @@ class CardSprite(pygame.sprite.Sprite):
         # necessary sprite attributes
         self.image = self._card_side_showing
         self.rect = self.image.get_rect()
+        self.rect.x, self.rect.y = coords
     
     def update(self, dt: float) -> None:
         self.image = self._card_side_showing
@@ -67,34 +83,8 @@ class CardSprite(pygame.sprite.Sprite):
         ))
 
         return base
-
-class HandOfCards(pygame.sprite.Sprite):
-    """Holds x cards and controls how to render them based on its dimensions. Attempts to render all cards possible. Hey, shouldn't this be a pygame.sprite.Group?"""
-
-    def __init__(self, rect: tuple[int, int], cards: list[CardSprite]):
-        super().__init__()
-        self.cards = cards # shouldnt i be a deck? is that even necessary?
-        self.backdrop = pygame.Surface(rect)
-        self.space = 10 # blank space to render between cards
-        self.backdrop_and_cards = self.blit_cards_to_hand()
-
-        # necessary sprite atributes
-        self.image: pygame.Surface = self.backdrop_and_cards
-        self.rect = self.image.get_rect()
-
-    def update(self):
-        pass
     
-    def blit_cards_to_hand(self) -> pygame.Surface:
-        image = self.backdrop
-        x_coord = 0
-        y_coord = 0
-        for card in self.cards:
-            image.blit(card.image, (
-                x_coord,
-                y_coord
-            ))
-            x_coord += card.image.get_width() + self.space
 
-        return image
 
+
+# im going insane. pygame is stupid. pyright is stupid. i just need something to *work*
