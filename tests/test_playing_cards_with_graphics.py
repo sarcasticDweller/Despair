@@ -9,7 +9,7 @@ from src.constants import *
 pygame.init()
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
-sprite = cards_with_graphics.CardSprite(STOCK_CARD)
+sprite = cards_with_graphics.CardSprite(STOCK_CARD, (0, 0))
 
 class TestCardsWithGraphics(unittest.TestCase):
     def test_working(self):
