@@ -1,2 +1,0 @@
-easyttuimenus==1.0.2
-pygame==2.6.1
