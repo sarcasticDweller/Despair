@@ -3,6 +3,7 @@ import src.text_game
 import src.graphics_game
 
 def main(mode: str) -> None:
+    print(f"Starting Despair in \"{mode}\" mode.")
     if mode == "graphics":
         src.graphics_game.main()
     if mode == "text":
