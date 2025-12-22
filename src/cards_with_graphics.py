@@ -1,28 +1,11 @@
-import pygame
+from pygame import Surface 
 import src.playing_cards as pc
-from src.constants import SUIT_PATHS, CARD_PATHS, RANK_PATHS, COLOR_KEY
-from src.gopher import resource_path
+from src.constants import SUIT_PATHS, CARD_PATHS, RANK_PATHS
+from src.mini_pygame import Prototype, Group, resolve_image
 
 
-def resolve_img(path: str) -> pygame.Surface:  
-    img: pygame.Surface = pygame.image.load(resource_path(path)).convert() 
-    img.set_colorkey(COLOR_KEY)
-    return img
 
 # some lessons we're learning: pyright and pygame do NOT get along. its going to be a challenge to not let this deter me
-
-class Prototype(pygame.sprite.Sprite):
-    def __init__(self):
-        super().__init__()
-        self.image = pygame.Surface((1, 1))
-        self.rect = self.image.get_rect()
-    
-    def move_rect(self, x: int = 0, y: int = 0) -> None:
-        self.rect.x += x
-        self.rect.y += y
-    
-    def update(self, dt: float):
-        self.move_rect(1, 1)
 
 class CardSprite(Prototype):
     def __init__(self, card: pc.Card, coords: tuple[int, int], facing_up: bool = True) -> None: 
@@ -31,11 +14,11 @@ class CardSprite(Prototype):
         self.card_data = card
 
         # get image data
-        self.suit_image = resolve_img(SUIT_PATHS[card.suit])
-        self.rank_image = resolve_img(RANK_PATHS[card.rank])
-        self.card_image_front = resolve_img(CARD_PATHS["front"])
+        self.suit_image = resolve_image(SUIT_PATHS[card.suit])
+        self.rank_image = resolve_image(RANK_PATHS[card.rank])
+        self.card_image_front = resolve_image(CARD_PATHS["front"])
         self.card_image_front = self._design_card_face()
-        self.card_image_back = resolve_img(CARD_PATHS["back"])
+        self.card_image_back = resolve_image(CARD_PATHS["back"])
         
         # necessary sprite attributes
         self.image = self._card_side_showing
@@ -50,11 +33,11 @@ class CardSprite(Prototype):
         self.facing_up = not self.facing_up
     
     @property # just learned what these do!
-    def _card_side_showing(self) -> pygame.Surface:
+    def _card_side_showing(self) -> Surface:
         """Returns the appropriate image based on which way the card is facing"""
         return self.card_image_front if self.facing_up else self.card_image_back
 
-    def _design_card_face(self) -> pygame.Surface:
+    def _design_card_face(self) -> Surface:
         """Adds suit and rank images to the card face and returns the final image. Should also add pips later."""
         base = self.card_image_front
         suit = self.suit_image
@@ -84,7 +67,6 @@ class CardSprite(Prototype):
 
         return base
     
-
-
-
-# im going insane. pygame is stupid. pyright is stupid. i just need something to *work*
+class HandOfCards(Group):
+    def __init__(self, *cards: CardSprite):
+        super().__init__(*cards)
