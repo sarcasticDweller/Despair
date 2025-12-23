@@ -1,21 +1,11 @@
-import pygame  # pyright: ignore[reportMissingTypeStubs]
 from src.constants import *
 import src.cards_with_graphics, src.playing_cards
-# oh no, i dont know what im doing! unfortunately, i have to write this in a github codespace and build it for a windows environment with no pygame installed locally before i can test things, so development is going to be slow and painful. happy happy joy joy.
+import src.mini_pygame as mp
+from pygame import quit as pquit
 
-
-def main() -> None:
-    # initialize pygame
-    pygame.init()
-    window: pygame.Surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT)) # gonna add extra type hints to help learn pygame (and to make pyright happy)
-    pygame.display.set_caption(WINDOW_CAPTION)
-
-    # initialize clock
-    clock = pygame.time.Clock()
-    dt = 0 # pyright: ignore[reportUnusedVariable]
-    fps = FPS
-
-    # initialize groups, with questionable typing
+def main() -> None: # i know i can make this tighter... i KNOW i can
+    window = mp.initialize_pygame(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_CAPTION)
+    clock = mp.Clock(FPS)
 
     card1 = src.cards_with_graphics.CardSprite(STOCK_CARD, (10, 20), True)
     card2 = src.cards_with_graphics.CardSprite(src.playing_cards.Card(
@@ -23,17 +13,28 @@ def main() -> None:
         src.playing_cards.Rank.TWO
     ), (40, 10), True)
     hand = src.cards_with_graphics.HandOfCards(card1, card2)
+    message = mp.FontSprite(FONT_TYPE, FONT_SIZE, text="Hello world", coords=(30, 30))
+    drawables = mp.Group(message)
 
-    # prototype game loop
+    
+    groups_to_draw: list[mp.Group] = [hand, drawables] # the more robust way to do this would be to make a group "drawables" that can inheret members from other groups
+
     while True:
-        for event in pygame.event.get():
-            # makes the close button work
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                return
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                card1.flip_card()
-        dt = clock.tick(fps) / 1000 # pyright: ignore[reportUnusedVariable] # magic number converts to seconds
-        window.fill(BG_COLOR)
-        hand.draw(window)
-        pygame.display.flip()
+        flags = mp.event_handler()
+        if mp.EventFlags.QUIT in flags:
+            pquit()
+            return
+        clock.update()
+        mp.draw(window, BG_COLOR, *groups_to_draw)
+
+import pygame
+def side() -> None:
+    pygame.font.init()
+    pass
+    """
+    pygame.font.init()
+    my_font = pygame.font.SysFont("Arial", 20)
+    text_surface = my_font.render("hello world", False, (0, 0, 0))
+    """
+
+

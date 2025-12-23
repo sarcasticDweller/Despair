@@ -6,6 +6,8 @@ WINDOW_HEIGHT = 200
 WINDOW_CAPTION = "Despair: A Game About Debt"
 FPS = 60
 BG_COLOR = (255, 255, 255)
+FONT_TYPE = "Arial"
+FONT_SIZE = 20
 
 # Game Rules
 HAND_SIZE = 5

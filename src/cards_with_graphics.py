@@ -1,7 +1,8 @@
 from pygame import Surface 
 import src.playing_cards as pc
-from src.constants import SUIT_PATHS, CARD_PATHS, RANK_PATHS
-from src.mini_pygame import Prototype, Group, resolve_image, resolve_images
+from src.constants import SUIT_PATHS, CARD_PATHS, RANK_PATHS, COLOR_KEY
+from src.mini_pygame import Prototype, Group
+from src.gopher import resolve_image, resolve_images
 
 
 
@@ -13,14 +14,14 @@ class CardSprite(Prototype):
         self.facing_up = facing_up
         self.card_data = card
         self.image_front = self._card_face
-        self.image_back = resolve_image(CARD_PATHS["back"])
+        self.image_back = resolve_image(CARD_PATHS["back"], COLOR_KEY)
         
         # necessary sprite attributes
         self.image = self._card_side_showing
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = coords
     
-    def update(self, dt: float) -> None:
+    def update(self) -> None:
         self.image = self._card_side_showing
     
     def flip_card(self) -> None:
@@ -36,6 +37,7 @@ class CardSprite(Prototype):
     def _card_face(self) -> Surface:
         card = self.card_data
         suit, rank, front = resolve_images(
+            COLOR_KEY,
             SUIT_PATHS[card.suit],
             RANK_PATHS[card.rank],
             CARD_PATHS["front"],
@@ -45,9 +47,9 @@ class CardSprite(Prototype):
                 rank: (0, 0),
                 suit: (rank.get_width(), 0)
             },
-            "bottom": {
-                rank: (front.get_width(), front.get_height()),
-                suit: (front.get_width() - rank.get_width(), front.get_height())
+            "bottom": { # make sure you arent out of bounds!
+                rank: (front.get_width() - rank.get_width(), front.get_height() - rank.get_height()),
+                suit: (front.get_width() - rank.get_width() - suit.get_width(), front.get_height() - suit.get_height())
             }
         }
         front.blits((
