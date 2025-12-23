@@ -39,13 +39,13 @@ class Deck:
     def __init__(self, cards: list[Card] = []) -> None:
         self.cards = cards
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str: 
         cards = ""
         for card in self.cards:
             cards += f", {card}"
         return cards
     
-    def get_list_of_cards_as_strings(self) -> list[str]:
+    def get_list_of_cards_as_strings(self) -> list[str]: # this *heavily* resembles __repr__... should these be merged?
         card_strings: list[str] = []
         for card in self.cards:
             card_strings.append(f"{card}")
