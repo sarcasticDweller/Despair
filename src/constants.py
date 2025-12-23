@@ -17,6 +17,7 @@ COLOR_KEY = (255, 255, 255)
 
 
 # file paths
+# hey, wouldnt these paths make more sense as enums?
 
 SUIT_PATHS = {
     Suit.SPADE: "assets/card/suit/devsprite_spade.png",

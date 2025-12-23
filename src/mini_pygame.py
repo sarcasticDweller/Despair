@@ -1,5 +1,5 @@
 from pygame import sprite, Surface, image, Rect
-from typing import Iterator
+from typing import Iterator, List
 from src.constants import  COLOR_KEY
 from src.gopher import resource_path
 
@@ -29,7 +29,7 @@ class Prototype(sprite.Sprite):
 # im going insane. pygame is stupid. pyright is stupid. i just need something to *work*
 
 # re: insanity,
-# instead of using what pygame gives me, lets jut make our own shit that LOOKS like what pygame gives me
+# instead of using the group class pygame gives me, let's just make one that functions more or less the same but with all the type annotations my little heart could desire
 
 class Group(): # no, not a pygame group! but has the same abilities as a pygame group
     def __init__(self, *sprites: sprite.Sprite):
@@ -47,8 +47,9 @@ class Group(): # no, not a pygame group! but has the same abilities as a pygame 
     def __iter__(self) -> Iterator[sprite.Sprite]:
         return iter(self._sprites)
     
-    def sprites(self) -> list[sprite.Sprite]:
+    def sprites(self) -> List[sprite.Sprite]:
         return self._sprites
+
     
     def copy(self) -> "Group":
         return Group(*self._sprites)
@@ -64,11 +65,15 @@ class Group(): # no, not a pygame group! but has the same abilities as a pygame 
     def has(self, *sprites: sprite.Sprite) -> bool:
         return all(sprite in self for sprite in sprites)
     
-    def update(*args, **kwargs) -> None: # type: ignore
-        pass
+    def update(self, *args, **kwargs) -> None: # pyright: ignore[reportUnknownParameterType, reportMissingParameterType]
+        """Updates all sprites in the group. Note that all sprites must take the same arguments in their update command"""
+        for sprite in self:
+            sprite.update(*args, **kwargs)
 
-    def draw(self, Surface: Surface, bgsurf: Surface | None = None, special_flags = 0) -> List[Rect]: # type: ignore
-        pass
+    def draw(self, Surface: Surface, bgsurf: Surface | None = None, special_flags = 0) -> list[Rect]: # type: ignore
+        """Draws all sprites in group. Note that arguments `bgsurf` and `special_flags` are unimplemented"""
+        for sprite in self:
+            Surface.blit(sprite.image, (sprite.rect.x, sprite.rect.y)) # pyright: ignore[reportUnknownMemberType, reportUnknownArgumentType]
 
     def clear(self, Surface_dest: Surface, background: Surface) -> None:
         pass
