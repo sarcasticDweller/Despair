@@ -1,7 +1,7 @@
 from pygame import Surface 
 import src.playing_cards as pc
 from src.constants import SUIT_PATHS, CARD_PATHS, RANK_PATHS
-from src.mini_pygame import Prototype, Group, resolve_image
+from src.mini_pygame import Prototype, Group, resolve_image, resolve_images
 
 
 
@@ -12,13 +12,8 @@ class CardSprite(Prototype):
         super().__init__()
         self.facing_up = facing_up
         self.card_data = card
-
-        # get image data
-        self.suit_image = resolve_image(SUIT_PATHS[card.suit])
-        self.rank_image = resolve_image(RANK_PATHS[card.rank])
-        self.card_image_front = resolve_image(CARD_PATHS["front"])
-        self.card_image_front = self._design_card_face()
-        self.card_image_back = resolve_image(CARD_PATHS["back"])
+        self.image_front = self._card_face
+        self.image_back = resolve_image(CARD_PATHS["back"])
         
         # necessary sprite attributes
         self.image = self._card_side_showing
@@ -35,38 +30,35 @@ class CardSprite(Prototype):
     @property # just learned what these do!
     def _card_side_showing(self) -> Surface:
         """Returns the appropriate image based on which way the card is facing"""
-        return self.card_image_front if self.facing_up else self.card_image_back
+        return self.image_front if self.facing_up else self.image_back
 
-    def _design_card_face(self) -> Surface:
-        """Adds suit and rank images to the card face and returns the final image. Should also add pips later."""
-        base = self.card_image_front
-        suit = self.suit_image
-        rank = self.rank_image
-        corner_slots = {
-            suit: {
-                "top": (0, 0),
-                "bottom": (
-                    base.get_width() - suit.get_width(),
-                    base.get_height() - suit.get_height()
-                )
+    @property # yep, im going to have way too much fun with these
+    def _card_face(self) -> Surface:
+        card = self.card_data
+        suit, rank, front = resolve_images(
+            SUIT_PATHS[card.suit],
+            RANK_PATHS[card.rank],
+            CARD_PATHS["front"],
+        )
+        slots = {
+            "top": {
+                rank: (0, 0),
+                suit: (rank.get_width(), 0)
             },
-            rank: {
-                "top": (suit.get_width(), 0),
-                "bottom": (
-                    base.get_width() - suit.get_width() - rank.get_width(), 
-                    base.get_height() - suit.get_height() 
-                )
+            "bottom": {
+                rank: (front.get_width(), front.get_height()),
+                suit: (front.get_width() - rank.get_width(), front.get_height())
             }
         }
-        base.blits((
-            (suit, corner_slots[suit]["top"]),
-            (suit, corner_slots[suit]["bottom"]),
-            (rank, corner_slots[rank]["top"]),
-            (rank, corner_slots[rank]["bottom"])
+        front.blits((
+            (suit, slots["top"][suit]),
+            (suit, slots["bottom"][suit]),
+            (rank, slots["top"][rank]),
+            (rank, slots["bottom"][rank]),
         ))
+        return front
 
-        return base
-    
+
 class HandOfCards(Group):
     def __init__(self, *cards: CardSprite):
         super().__init__(*cards)

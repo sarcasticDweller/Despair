@@ -22,6 +22,7 @@ def main() -> None:
         src.playing_cards.Suit.SPADE,
         src.playing_cards.Rank.TWO
     ), (40, 10), True)
+    hand = src.cards_with_graphics.HandOfCards(card1, card2)
 
     # prototype game loop
     while True:
@@ -34,6 +35,5 @@ def main() -> None:
                 card1.flip_card()
         dt = clock.tick(fps) / 1000 # pyright: ignore[reportUnusedVariable] # magic number converts to seconds
         window.fill(BG_COLOR)
-        window.blit(card1.image, (card1.rect.x, card1.rect.y))
-        card1.move_rect(1, 1)
+        hand.draw(window)
         pygame.display.flip()
