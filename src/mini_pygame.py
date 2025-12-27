@@ -2,7 +2,7 @@ from pygame import Surface, Rect, time, display, font, mouse
 from pygame import init as pinit
 from pygame.sprite import Sprite
 from pygame import quit as pquit
-from typing import Iterator, List, Tuple, Callable
+from typing import Iterator, List, Tuple, Callable, Any
 from src.constants import  COLOR_KEY
 from src.gopher import resolve_image
 from enum import Flag, auto
@@ -64,6 +64,8 @@ class Game:
         if EventFlags.QUIT in flags:
             pquit()
             return Game.ExitCodes.WINDOW_CLOSED
+        if EventFlags.MOUSE_CLICK in flags: #remove me!
+            print("Game saw the mouse-click")
 
         self.clock.update()
         self.updatables.update(flags)
@@ -256,7 +258,7 @@ class Group(): # no, not a pygame group! but has similar abilities to a pygame g
     def has(self, *sprites: Prototype) -> bool:
         return all(sprite in self for sprite in sprites)
     
-    def update(self, flags: EventFlags = EventFlags(0)) -> None:
+    def update(self, flags: EventFlags = EventFlags(0)) -> None: # to be overwritten
         for sprite in self:
             sprite.update()
 
@@ -271,3 +273,11 @@ class Group(): # no, not a pygame group! but has similar abilities to a pygame g
 
     def empty(self) -> None:
         self._sprites = []
+
+class GroupGroup(): # brilliant name there
+    def __init__(self, *groups: Group):
+        self._groups = groups
+    
+    def update(self, *args: Any) -> None: 
+        for group in self._groups:
+            group.update(*args) 

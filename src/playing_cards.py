@@ -22,6 +22,14 @@ class Rank(enum.IntEnum):
     KING = 13
 
 class Card:
+    """
+    Contains a suit and rank enum value that can be used for playing-card games. Supports high and low aces.
+    
+    :var suit: simple enumerated suit data. Under the hood, it's a `str` (for now).
+    :vartype suit: Suit
+    :var rank: simple enumerated rank data. Under the hood, it's an `int`.
+    :vartype rank: Rank
+    """
     def __init__(self, suit: Suit, rank: Rank) -> None:
         self.suit = suit
         self.rank = rank
@@ -30,10 +38,12 @@ class Card:
         return f"Card {self.rank.name} of {self.suit.name}"
     
     def __lt__(self, other: "Card") -> bool:
-        return self.rank < other.rank
+        #return self.rank < other.rank
+        return True if self.rank == Rank.KING and other.rank == Rank.ACE else self.rank < other.rank
     
     def __gt__(self, other: "Card") -> bool:
-        return self.rank > other.rank
+        #return self.rank > other.rank
+        return True if self.rank == Rank.ACE and other.rank == Rank.KING else self.rank > other.rank
     
 class Deck:
     def __init__(self, cards: list[Card] = []) -> None:
@@ -150,7 +160,7 @@ class Deck:
         return len(pairs) > 0, pairs
 
     def contains_straights(self, size_of_straight: int = 3) -> tuple[bool, list[list[Card]]]:
-        """Checks the deck for straights of a given length. Supports three-card straights, four-card straights, etc.
+        """Checks the deck for straights of a given length. Supports three-card straights, four-card straights, etc. Only supports low aces... This method needs to be further fleshed-out.
 
         :param size_of_straight: The length of the straights to check for. Defaults to 3 to search for standard straights.
         :type size_of_straight: int (optional)

@@ -64,10 +64,11 @@ class HandOfCards(Group):
         super().__init__(*cards)
     
     def update(self, flags: EventFlags = EventFlags(0)) -> None:
-        super().update()
-        return
+        #super().update()
+        #return
         # oh dear, you add one little feature and the world catches on fire. i cant tell *why* but now all the cards are being drawn in the CORNER *facepalm*
         if EventFlags.MOUSE_CLICK in flags:
+            print("Click detected!")
             mouse = MouseSprite() # a temporary one!
             mouse.update()
             clicked_cards = mouse.collide(*self.sprites())
