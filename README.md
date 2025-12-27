@@ -14,6 +14,53 @@ If in a Codespace:
 
 # Dev Diary
 
+## 2025-12-27
+
+Interesting problem occured today: When I run the game from the command prompt (with or without the venv activated) it runs fine. On Mac, anyway. But when I click on the executable on my Mac I get this output:
+
+```shell
+$ ~/Documents/Coding/sarcasticDweller/Despair/build/exe.macosx-15.0-arm64-3.13/despair ; exit;
+pygame 2.6.1 (SDL 2.28.4, Python 3.13.10)
+Hello from the pygame community. https://www.pygame.org/contribute.html
+Starting Despair in "graphics" mode.
+initialized window
+Traceback (most recent call last):
+  File "~/Documents/Coding/sarcasticDweller/Despair/venv/lib/python3.13/site-packages/freeze_core/initscripts/__startup__.py", line 137, in run
+    module_init.run(f"__main__{name}")
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "~/Documents/Coding/sarcasticDweller/Despair/venv/lib/python3.13/site-packages/freeze_core/initscripts/console.py", line 27, in run
+    exec(code, main_globals)
+    ~~~~^^^^^^^^^^^^^^^^^^^^
+  File "src/main.py", line 13, in <module>
+  File "~/Documents/Coding/sarcasticDweller/Despair/src/graphics_game.py", line 35, in game_loop
+    updatables, drawables = initializer()
+                            ~~~~~~~~~~~^^
+  File "~/Documents/Coding/sarcasticDweller/Despair/src/graphics_game.py", line 10, in initializer
+    card1 = CardSprite(STOCK_CARD, (10, 20), True)
+  File "~/Documents/Coding/sarcasticDweller/Despair/src/cards_with_graphics.py", line 16, in __init__
+    # necessary sprite attributes
+  File "~/Documents/Coding/sarcasticDweller/Despair/src/cards_with_graphics.py", line 42, in _card_face
+        CARD_PATHS["front"],
+                        ^^^^
+    ...<4 lines>...
+            suit: (rank.get_width(), 0)
+    
+  File "~/Documents/Coding/sarcasticDweller/Despair/src/gopher.py", line 21, in resolve_images
+    return [resolve_image(path, color_key) for path in paths]
+            ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "~/Documents/Coding/sarcasticDweller/Despair/src/gopher.py", line 16, in resolve_image
+    img = image.load(resource_path(path)).convert()
+          ~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: No such file or directory: '~/assets/card/suit/devsprite_heart.png'.
+
+Saving session...
+...copying shared history...
+...saving history...truncating history files...
+...completed.
+```
+
+Why the resolver is looking in the home directory for assets is beyond me.
+
 ## 2025-12-19
 
 This has been an uphill battle the whole way. Now, `start_gui.sh` no longer starts a functional noVNC server. Sometimes, manually running `x11vnc -display :1 -nopw -forever -shared -rfbport 5900` does the trick.
