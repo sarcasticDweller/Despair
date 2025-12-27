@@ -2,7 +2,7 @@ import easyttuimenus as ttui  # pyright: ignore[reportMissingTypeStubs]
 from src.constants import *
 import src.playing_cards as playing_cards
 
-def text_game_loop() -> None:
+def game_loop() -> None:
     PAUSE_TEXT = "Press enter to continue"
     pause = lambda: input(PAUSE_TEXT)
     played_cards = playing_cards.Deck()
@@ -58,4 +58,4 @@ def text_game_loop() -> None:
     return
 
 if __name__ == "__main__":
-    text_game_loop()
+    game_loop()

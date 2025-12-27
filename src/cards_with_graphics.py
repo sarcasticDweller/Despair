@@ -1,7 +1,7 @@
 from pygame import Surface 
 import src.playing_cards as pc
 from src.constants import SUIT_PATHS, CARD_PATHS, RANK_PATHS, COLOR_KEY
-from src.mini_pygame import Prototype, Group
+from src.mini_pygame import Prototype, MouseSprite, Group, EventFlags
 from src.gopher import resolve_image, resolve_images
 
 
@@ -21,7 +21,10 @@ class CardSprite(Prototype):
         self.rect = self.image.get_rect()
         self.rect.x, self.rect.y = coords
     
-    def update(self) -> None:
+    def update(self, flags: EventFlags = EventFlags(0)) -> None: # pyright: ignore[reportIncompatibleMethodOverride]
+        super().update()
+        if EventFlags.MOUSE_CLICK in flags:
+            self.flip_card()
         self.image = self._card_side_showing
     
     def flip_card(self) -> None:
@@ -34,7 +37,7 @@ class CardSprite(Prototype):
         return self.image_front if self.facing_up else self.image_back
 
     @property # yep, im going to have way too much fun with these
-    def _card_face(self) -> Surface:
+    def _card_face(self) -> Surface: # customize me later when you evolve from devsprites!
         card = self.card_data
         suit, rank, front = resolve_images(
             COLOR_KEY,
@@ -60,7 +63,23 @@ class CardSprite(Prototype):
         ))
         return front
 
-
 class HandOfCards(Group):
     def __init__(self, *cards: CardSprite):
         super().__init__(*cards)
+    
+    def update(self, flags: EventFlags = EventFlags(0)) -> None:
+        super().update(flags)
+        return
+        # oh dear, you add one little feature and the world catches on fire. i cant tell *why* but now all the cards are being drawn in the CORNER *facepalm*
+        if EventFlags.MOUSE_CLICK in flags:
+            mouse = MouseSprite() # a temporary one!
+            mouse.update()
+            clicked_cards = mouse.collide(*self.sprites())
+            if clicked_cards:
+                for card in clicked_cards:
+                    flags_to_pass = EventFlags(0)
+                    flags_to_pass |= EventFlags.MOUSE_CLICK
+                    card.update(flags_to_pass)
+        for card in self:
+            card.update()
+            

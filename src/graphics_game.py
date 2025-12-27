@@ -1,40 +1,51 @@
 from src.constants import *
-import src.cards_with_graphics, src.playing_cards
-import src.mini_pygame as mp
-from pygame import quit as pquit
-
-def main() -> None: # i know i can make this tighter... i KNOW i can
-    window = mp.initialize_pygame(WINDOW_WIDTH, WINDOW_HEIGHT, WINDOW_CAPTION)
-    clock = mp.Clock(FPS)
-
-    card1 = src.cards_with_graphics.CardSprite(STOCK_CARD, (10, 20), True)
-    card2 = src.cards_with_graphics.CardSprite(src.playing_cards.Card(
-        src.playing_cards.Suit.SPADE,
-        src.playing_cards.Rank.TWO
-    ), (40, 10), True)
-    hand = src.cards_with_graphics.HandOfCards(card1, card2)
-    message = mp.FontSprite(FONT_TYPE, FONT_SIZE, text="Hello world", coords=(30, 30))
-    drawables = mp.Group(message)
-
-    
-    groups_to_draw: list[mp.Group] = [hand, drawables] # the more robust way to do this would be to make a group "drawables" that can inheret members from other groups
-
-    while True:
-        flags = mp.event_handler()
-        if mp.EventFlags.QUIT in flags:
-            pquit()
-            return
-        clock.update()
-        mp.draw(window, BG_COLOR, *groups_to_draw)
-
+from src.cards_with_graphics import CardSprite, HandOfCards
+from src.playing_cards import Card, Suit, Rank
+from src.mini_pygame import FontSprite, Group, Game, EventFlags
+from pygame import event
 import pygame
-def side() -> None:
-    pygame.font.init()
-    pass
-    """
-    pygame.font.init()
-    my_font = pygame.font.SysFont("Arial", 20)
-    text_surface = my_font.render("hello world", False, (0, 0, 0))
-    """
+from typing import Tuple
 
+def initializer() -> Tuple[Group, Group]:
+    card1 = CardSprite(STOCK_CARD, (10, 20), True)
+    card2 = CardSprite(Card(Suit.SPADE, Rank.TWO), (40, 10), True)
+    hand = HandOfCards(card1, card2)
+    message = FontSprite(FONT_TYPE, FONT_SIZE, text="Hello world", coords=(30, 30))
+    updatables = Group(*hand.sprites(), message)
+    drawables = updatables.copy()
+    return updatables, drawables
 
+def event_handler() -> EventFlags:  
+    flags = EventFlags(0)
+    for e in event.get():
+        if e.type == pygame.QUIT:
+            flags |= EventFlags.QUIT
+        if e.type == pygame.MOUSEBUTTONDOWN:
+            flags |= EventFlags.MOUSE_CLICK
+        # if e.type == specific_key_pressed: flags |= EventFlags.MOVE_LEFT, or something like that
+    return flags
+
+def game_loop() -> None:
+    window = Game.init(
+        (WINDOW_WIDTH, WINDOW_HEIGHT),
+        WINDOW_CAPTION,
+        font_init=True
+    )
+    print("initialized window")
+    updatables, drawables = initializer()
+    print("initialized items")
+    game = Game(
+        window,
+        BG_COLOR,
+        FPS,
+        updatables,
+        drawables,
+        event_handler
+    )
+    print("initialized game instance")
+    while True:
+        event = game.tick()
+        if event == game.ExitCodes.WINDOW_CLOSED:
+            break
+    print("Ending game")
+    return

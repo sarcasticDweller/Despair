@@ -1,15 +1,6 @@
 import unittest
-from pygame import Surface
 from pygame.sprite import Sprite, Group
 from src.mini_pygame import *
-from src.constants import CARD_PATHS
-
-
-class TestResolver(unittest.TestCase):
-
-    def test_resolves_image(self):
-        image = resolve_image(CARD_PATHS["error"])
-        self.assertIsInstance(image, Surface)
 
 class TestPrototype(unittest.TestCase):
 
