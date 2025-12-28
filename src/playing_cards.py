@@ -68,6 +68,7 @@ class Deck(List[Card]):
         return drawn_cards
     
     def empty_deck(self) -> List[Card]:
+        """Returns the contents of the deck. Designed to easily pipe contents from A to B."""
         old_cards = list(self)
         self.clear()
         return old_cards
