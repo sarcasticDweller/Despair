@@ -61,8 +61,8 @@ class Deck(List[Card]):
         HIGH = enum.auto()
         BOTH = enum.auto()
     
-    ACE_PREFERENCE: AcePreference = AcePreference.LOW
-    ACES_MODE: AcesMode = AcesMode.BOTH
+    _ace_preference: AcePreference = AcePreference.LOW
+    _aces_mode: AcesMode = AcesMode.BOTH
     def __init__(self, *cards: Card) -> None:
         super().__init__(cards)
     
@@ -75,7 +75,7 @@ class Deck(List[Card]):
         - AcesMode.HIGH: Only allow high aces (can be played with a King, but never a two)
         - AcesMode.BOTH: Allow both high and low aces (can be played with a King or a two)
         """
-        cls.ACES_MODE = mode
+        cls.aces_mode = mode
     
     @classmethod
     def set_aces_preference(cls, preference: AcePreference) -> None:
@@ -85,7 +85,7 @@ class Deck(List[Card]):
         -AcePreference.LOW: When a sequence containing a low ace and a high ace is found, but there's only one ace, favor the lower sequence
         -AcePreference.LOW: When a sequence containing a low ace and a high ace is found, but there's only one ace, favor the higher sequence
         """
-        cls.ACE_PREFERENCE = preference
+        cls.ace_preference = preference
 
     def get_list_of_cards_as_strings(self) -> List[str]: # this *heavily* resembles __repr__... should these be merged?
         return [f"{card}" for card in self]
@@ -181,7 +181,9 @@ class Deck(List[Card]):
         return len(pairs) > 0, pairs
 
     def contains_straights(self, size_of_straight: int = 3) -> tuple[bool, List[List[Card]]]:
-        """Checks the deck for straights of a given length. Supports three-card straights, four-card straights, etc. Only supports low aces... This method needs to be further fleshed-out.
+        """Checks the deck for straights of a given length. Supports three-card straights, four-card straights, etc. Supports high and low aces.
+
+        **IMPORTANT**: If you want to customize how aces work, make sure you `Deck.set_aces_preference` and `Deck.set_aces_mode` before running `Deck.contains_straights`
 
         :param size_of_straight: The length of the straights to check for. Defaults to 3 to search for standard straights.
         :type size_of_straight: int (optional)
@@ -202,7 +204,7 @@ class Deck(List[Card]):
             if len(suited_cards) < size_of_straight:
                 continue
 
-            # happy case first
+            # happy case 
             if len(suited_cards) == size_of_straight and suited_cards[-1].rank - suited_cards[0].rank == size_of_straight - 1:
                 straights.append(suited_cards)
                 continue # to next suit
@@ -223,19 +225,16 @@ class Deck(List[Card]):
             if not found_sequences:
                 continue
 
-
             low_ace_used, high_ace_used = found_sequences[0][0].rank == int(Rank.ACE), found_sequences[-1][-1].rank == HIGH_ACE
             if low_ace_used and high_ace_used:
-                if Deck.ACE_PREFERENCE == Deck.AcePreference.LOW:
+                if Deck._ace_preference == Deck.AcePreference.LOW:
                     found_sequences.pop(-1)
-                if Deck.ACE_PREFERENCE == Deck.AcePreference.HIGH:
+                if Deck._ace_preference == Deck.AcePreference.HIGH:
                     found_sequences.pop(0)
             elif high_ace_used and not low_ace_used:
                 found_sequences[-1][-1] = first_card # which must be an ace, because an ace is present
             
             straights.extend(found_sequences)
-
-            
 
         return len(straights) > 0, straights
     
