@@ -1,5 +1,5 @@
 import random, enum
-from typing import List
+from typing import List, Dict, Tuple
 
 class Suit(enum.Enum):
     SPADE = "spade"
@@ -101,16 +101,17 @@ class Deck(List[Card]):
         _, ranks = self.get_card_data_as_lists()
         return len(set(ranks)) == 1
     
-    def contains_pairs(self, size_of_pair: int = 2) -> tuple[bool, List[List[Card]]]:
+    def contains_pairs(self, size_of_pair: int = 2) -> Tuple[bool, List[List[Card]]]:
         """Checks the deck for pairs of a given length. Supports two-of-a-kind, three-of-a-kind, etc.
-        Args:
-            size_of_pair (int, optional): The length of the pairs to check for. Defaults to 2 to search for standard pairs.
-        Returns:
-            tuple[bool, List[List[Card]]]:
-                - A boolean indicating whether any pairs of the specified length were found.
-                - A list of lists, where each inner list contains `Card` objects representing a pair.
+
+        :param size_of_pair: The length of the pairs to check for. Defaults to 2 to search for standard pairs. I'd like to make this cacheable, but that's a smarter person's job.
+        :type size_of_pair: int, (optional)
+        :return: A tuple containing:
+                - A `bool` indicating whether any pairs of the specified length (`size_of_pair`) were found.
+                - A `list` of lists, where each inner `list` contains `Card` objects representing a pair.
+        :rtype: Tuple[bool, List[List[Card]]]
         """
-        ranks_dict: dict[int, List[Card]] = {}
+        ranks_dict: Dict[int, List[Card]] = {}
         pairs: List[List[Card]] = []
         for card in self:
             if card.rank not in ranks_dict:
@@ -155,10 +156,7 @@ class Deck(List[Card]):
 
         # group by suit
         for card in self:
-            if card.suit not in suits_dict:
-                suits_dict[card.suit] = []
-            suits_dict[card.suit].append(card) # always add the card to respect larger card decks
-        
+            suits_dict.setdefault(card.suit, []).append(card)
         for suit in suits_dict:
             suited_cards = sorted(suits_dict[suit])
 
@@ -167,14 +165,28 @@ class Deck(List[Card]):
                 straights.append(suited_cards)
                 continue # to next suit
 
-            # convert cards to list of ints for simpler analysis
-            card_ranks = [int(card.rank) for card in suited_cards]
-            found_sequences: List[List[int]] = find_unique_sequences(card_ranks, size_of_straight)
+            def analyze(): # i REALLY want to cache the results of this! but thats for someone who isnt twenty minutes away from bedtime to do
+                # convert cards to list of ints for simpler analysis
+                card_ranks = [int(card.rank) for card in suited_cards]
+                found_sequences: List[List[int]] = find_unique_sequences(card_ranks, size_of_straight)
 
-            # convert found_sequences back into List[List[card]]
-            for sequence in found_sequences:
-                straight_cards = [card for rank in sequence for card in suited_cards if card.rank == rank]
-                straights.append(straight_cards)
+                # convert found_sequences back into List[List[card]]
+                for sequence in found_sequences:
+                    straight_cards = [card for rank in sequence for card in suited_cards if card.rank == rank]
+                    straights.append(straight_cards)
+                
+                return straights
+
+            # wait! is it a high ace?
+            first = suited_cards[0]
+            if first.rank == Rank.ACE:
+                first.rank = 14 # pyright: ignore[reportAttributeAccessIssue] duck-type it!
+                straights = analyze()
+                if first in straights:
+                    suited_cards.pop(0)
+            else:
+                analyze()
+
 
 
         return len(straights) > 0, straights

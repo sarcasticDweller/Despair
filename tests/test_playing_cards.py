@@ -2,7 +2,7 @@ import unittest
 from src.playing_cards import *
 from src.constants import *
 
-class TestCards(unittest.TestCase):
+class TestCardsSupportHighAndLowAces(unittest.TestCase):
 
     def setUp(self):
         self.ace = Card(Suit.HEART, Rank.ACE)
@@ -30,7 +30,7 @@ class TestCards(unittest.TestCase):
 class TestDeckContainsStraights(unittest.TestCase):
 
     def setUp(self):
-        cards = [ # im bad at list slices, so im referencing these bad boys individually
+        self.cards = [ # im bad at list slices, so im referencing these bad boys individually
             Card(Suit.HEART, Rank.ACE),    # 0
             Card(Suit.HEART, Rank.TWO),    # 1
             Card(Suit.HEART, Rank.NINE),   # 2
@@ -44,21 +44,45 @@ class TestDeckContainsStraights(unittest.TestCase):
             Card(Suit.SPADE, Rank.FOUR)    # 10
         ]
 
-        self.deck1 = Deck([
-            cards[0],
-            cards[1],
-            cards[2]
-        ])
-        self.deck2 = Deck([
-            cards[5],
-            cards[6],
-            cards[7]
-        ])
-        self.deck3 = Deck([
-            cards[8],
-            cards[9],
-            cards[10]
-        ])
+        self.deck1 = Deck(
+            self.cards[0],
+            self.cards[1],
+            self.cards[2]
+        )
+        self.deck2 = Deck(
+            self.cards[5],
+            self.cards[6],
+            self.cards[7]
+        )
+        self.deck3 = Deck(
+            self.cards[8],
+            self.cards[9],
+            self.cards[10]
+        )
+
+    def test_deck_with_hearts_ace_two_three_ThusTrue(self):
+        deck = Deck(
+            Card(Suit.HEART, Rank.ACE),
+            Card(Suit.HEART, Rank.TWO),
+            Card(Suit.HEART, Rank.THREE)
+        )
+        self.assertTrue(deck.contains_straights()[0])
+
+    def test_deck_with_hearts_queen_king_ace_ThusTrue(self):
+        deck = Deck(
+            Card(Suit.HEART, Rank.QUEEN),
+            Card(Suit.HEART, Rank.KING),
+            Card(Suit.HEART, Rank.ACE)
+        )
+        self.assertTrue(deck.contains_straights()[0])
+    
+    def test_deck_with_mixed_suits_ace_two_three_ThusFalse(self):
+        deck = Deck(
+            Card(Suit.CLUB, Rank.ACE),
+            Card(Suit.DIAMOND, Rank.TWO),
+            Card(Suit.HEART, Rank.THREE)
+        )
+        self.assertFalse(deck.contains_straights()[0])
 
     def test_resolves_False_1(self):
         self.assertFalse(self.deck1.contains_straights()[0])
