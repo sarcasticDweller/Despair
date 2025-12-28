@@ -253,12 +253,13 @@ class Group(List[Prototype]): # no, not a pygame group! but has similar abilitie
         # see https://github.com/pygame/pygame/blob/main/src_py/sprite.py#L357 (AbstractGroup.clear()) for what to rip off
         pass
 
-    def empty(self) -> None:
-        self._sprites = []
+    def empty(self) -> None: # pretty much identical to the real deal
+        for sprite in self:
+            self.remove(sprite)
 
 class GroupGroup(List[Group]): # brilliant name there
     def __init__(self, *groups: Group):
-        super().__init__(*groups)
+        super().__init__(groups)
     
     def update(self, *args: Any) -> None: 
         for group in self:

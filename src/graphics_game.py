@@ -12,7 +12,7 @@ def initializer() -> Tuple[Group, Group]:
     hand = HandOfCards(card1, card2)
     message = FontSprite(FONT_TYPE, FONT_SIZE, text="Hello world", coords=(30, 30))
     updatables = GroupGroup(hand, Group(message)) # this plain group wont have the fun updater methods it should have
-    drawables = Group(*hand.sprites(), message)
+    drawables = Group(*hand, message)
     return updatables, drawables # pyright: ignore[reportReturnType]
     #                                       fix this ignore -^
 

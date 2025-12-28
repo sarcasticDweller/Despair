@@ -71,7 +71,7 @@ class HandOfCards(Group):
             print("Click detected!")
             mouse = MouseSprite() # a temporary one!
             mouse.update()
-            clicked_cards = mouse.collide(*self.sprites())
+            clicked_cards = mouse.collide(*self)
             if clicked_cards:
                 for card in clicked_cards:
                     flags_to_pass = EventFlags(0)
