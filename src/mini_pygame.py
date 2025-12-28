@@ -2,7 +2,7 @@ from pygame import Surface, Rect, time, display, font, mouse
 from pygame import init as pinit
 from pygame.sprite import Sprite
 from pygame import quit as pquit
-from typing import Iterator, List, Tuple, Callable, Any
+from typing import Iterator, List, Tuple, Callable, Any, Iterable
 from src.constants import  COLOR_KEY
 from src.gopher import resolve_image
 from enum import Flag, auto
@@ -217,7 +217,7 @@ class FontSprite(Prototype):
 # re: insanity,
 # instead of using the group class pygame gives me, let's just make one that functions more or less the same but with all the type annotations my little heart could desire
 
-class Group(): # no, not a pygame group! but has similar abilities to a pygame group
+class Group(List[Prototype]): # no, not a pygame group! but has similar abilities to a pygame group
     def __init__(self, *sprites: Prototype):
         """
         An almost-completely-comparable group to a typical pygame group, forged out of frustration with pyright. **Note that this group does NOT support passing iterators through `*sprites` parameters.**
@@ -227,33 +227,14 @@ class Group(): # no, not a pygame group! but has similar abilities to a pygame g
         :param sprites: Native pygame sprites or objects that inheret from pygame sprites.
         :type sprites: pygame.Sprite
         """
-        self._sprites = [*sprites] # i generally dislike *args and **kwargs, but lets just use them for simplicity forn now
+        super().__init__(sprites)
+        #self._sprites = [*sprites] # i generally dislike *args and **kwargs, but lets just use them for simplicity forn now
 
-    def __contains__(self, sprite: Prototype) -> bool:
-        return sprite in self._sprites
-    
-    def __len__(self) -> int:
-        return len(self._sprites)
-    
-    def __bool__(self) -> bool:
-        return len(self) > 0 # this should work fine, right?
-    
-    def __iter__(self) -> Iterator[Prototype]:
-        return iter(self._sprites)
-    
-    def sprites(self) -> List[Prototype]:
-        return self._sprites
-
-    def copy(self) -> "Group":
-        return Group(*self._sprites)
-    
     # given that this is a recreation of pygame's pygame.sprite.Group() class its worth noting some limitations. the manual (https://www.pygame.org/docs/ref/sprite.html) CLEARLY states that the *sprites argument in future functions can take an iterator containing sprites, but im not toooo sure if that works here. by my understanding, **it does not work**
     
-    def add(self, *sprites: Prototype) -> None:
-        self._sprites.extend(sprite for sprite in sprites if sprite not in self)
-    
-    def remove(self, *sprites: Prototype) -> None:
-        self._sprites = [sprite for sprite in self if sprite not in sprites]
+    def extend(self, sprites: Iterable[Prototype]) -> None:
+        """Only extends values not already in the group"""
+        self.extend(sprite for sprite in sprites if sprite not in self)
     
     def has(self, *sprites: Prototype) -> bool:
         return all(sprite in self for sprite in sprites)
@@ -268,16 +249,17 @@ class Group(): # no, not a pygame group! but has similar abilities to a pygame g
             Surface.blit(sprite.image, (sprite.rect.x, sprite.rect.y)) # pyright: ignore[reportAttributeAccessIssue, reportUnknownMemberType, reportUnknownArgumentType]
             # whoops!
 
-    def clear(self, Surface_dest: Surface, background: Surface) -> None:
+    def clear(self, Surface_dest: Surface, background: Surface) -> None: # type: ignore
+        # see https://github.com/pygame/pygame/blob/main/src_py/sprite.py#L357 (AbstractGroup.clear()) for what to rip off
         pass
 
     def empty(self) -> None:
         self._sprites = []
 
-class GroupGroup(): # brilliant name there
+class GroupGroup(List[Group]): # brilliant name there
     def __init__(self, *groups: Group):
-        self._groups = groups
+        super().__init__(*groups)
     
     def update(self, *args: Any) -> None: 
-        for group in self._groups:
+        for group in self:
             group.update(*args) 
