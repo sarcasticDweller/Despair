@@ -22,6 +22,12 @@ class Rank(enum.IntEnum):
     QUEEN = 12
     KING = 13
 
+class SpecialRank(enum.IntEnum):
+    ACEHIGH = 14
+
+RankType = Rank | SpecialRank
+
+
 class Card:
     """
     Contains a suit and rank enum value that can be used for playing-card games. Supports high and low aces.
@@ -31,7 +37,7 @@ class Card:
     :var rank: simple enumerated rank data. Under the hood, it's an `int`.
     :vartype rank: Rank
     """
-    def __init__(self, suit: Suit, rank: Rank) -> None:
+    def __init__(self, suit: Suit, rank: RankType) -> None:
         self.suit = suit
         self.rank = rank
     
@@ -47,8 +53,39 @@ class Card:
         return True if self.rank == Rank.ACE and other.rank == Rank.KING else self.rank > other.rank
     
 class Deck(List[Card]):
+    class AcePreference(enum.IntEnum):
+        LOW = enum.auto()
+        HIGH = enum.auto()
+    class AcesMode(enum.IntEnum):
+        LOW = enum.auto()
+        HIGH = enum.auto()
+        BOTH = enum.auto()
+    
+    ACE_PREFERENCE: AcePreference = AcePreference.LOW
+    ACES_MODE: AcesMode = AcesMode.BOTH
     def __init__(self, *cards: Card) -> None:
         super().__init__(cards)
+    
+    @classmethod
+    def set_aces_mode(cls, mode: AcesMode) -> None:
+        """
+        Determines how aces are played in the game. Possible options are:
+
+        - AcesMode.LOW: Only allow low aces (can be played with a two, but never a King)
+        - AcesMode.HIGH: Only allow high aces (can be played with a King, but never a two)
+        - AcesMode.BOTH: Allow both high and low aces (can be played with a King or a two)
+        """
+        cls.ACES_MODE = mode
+    
+    @classmethod
+    def set_aces_preference(cls, preference: AcePreference) -> None:
+        """
+        Determines what kind of sequence should be favored when an ace is involved. Possible options are:
+
+        -AcePreference.LOW: When a sequence containing a low ace and a high ace is found, but there's only one ace, favor the lower sequence
+        -AcePreference.LOW: When a sequence containing a low ace and a high ace is found, but there's only one ace, favor the higher sequence
+        """
+        cls.ACE_PREFERENCE = preference
 
     def get_list_of_cards_as_strings(self) -> List[str]: # this *heavily* resembles __repr__... should these be merged?
         return [f"{card}" for card in self]
@@ -73,13 +110,16 @@ class Deck(List[Card]):
         self.clear()
         return old_cards
 
-    def get_card_data_as_lists(self) -> tuple[List[Suit], List[Rank]]: 
+    def get_card_data_as_lists(self) -> tuple[List[Suit], List[RankType]]: 
         suits: List[Suit] = []
-        ranks: List[Rank] = []
+        ranks: List[RankType] = []
         for card in self:
             suits.append(card.suit)
-            ranks.append(card.rank)
+            ranks.append(card.rank) 
         return suits, ranks
+    
+    def get_ranks_as_list_of_ints(self, cards: List[Card]) -> List[int]:
+        return [int(card.rank) for card in cards]
 
     def is_straight(self, length: int = 3) -> bool:
         """Depricated in favor of `contains_straights()`... ?"""
@@ -159,35 +199,43 @@ class Deck(List[Card]):
             suits_dict.setdefault(card.suit, []).append(card)
         for suit in suits_dict:
             suited_cards = sorted(suits_dict[suit])
+            if len(suited_cards) < size_of_straight:
+                continue
 
             # happy case first
             if len(suited_cards) == size_of_straight and suited_cards[-1].rank - suited_cards[0].rank == size_of_straight - 1:
                 straights.append(suited_cards)
                 continue # to next suit
 
-            def analyze(): # i REALLY want to cache the results of this! but thats for someone who isnt twenty minutes away from bedtime to do
-                # convert cards to list of ints for simpler analysis
-                card_ranks = [int(card.rank) for card in suited_cards]
-                found_sequences: List[List[int]] = find_unique_sequences(card_ranks, size_of_straight)
+            first_card = suited_cards[0]
+            ace_present = first_card.rank == Rank.ACE
+            special_card: Card | None = None # it will only be used in scopes where i know it exists, but this is clearer?
+            HIGH_ACE = SpecialRank.ACEHIGH
 
-                # convert found_sequences back into List[List[card]]
-                for sequence in found_sequences:
-                    straight_cards = [card for rank in sequence for card in suited_cards if card.rank == rank]
-                    straights.append(straight_cards)
-                
-                return straights
+            if ace_present:
+                special_card = Card(suit, Rank.ACE)
+                special_card.rank = HIGH_ACE # pyright: ignore[reportAttributeAccessIssue] duck-type our way to a high-ace!
+                suited_cards.append(special_card)
+            
+            card_ranks = self.get_ranks_as_list_of_ints(suited_cards)
 
-            # wait! is it a high ace?
-            first = suited_cards[0]
-            if first.rank == Rank.ACE:
-                first.rank = 14 # pyright: ignore[reportAttributeAccessIssue] duck-type it!
-                straights = analyze()
-                if first in straights:
-                    suited_cards.pop(0)
-            else:
-                analyze()
+            found_sequences = [[card for rank in sequence for card in suited_cards if card.rank == rank] for sequence in find_unique_sequences(card_ranks, size_of_straight)]
+            if not found_sequences:
+                continue
 
 
+            low_ace_used, high_ace_used = found_sequences[0][0].rank == int(Rank.ACE), found_sequences[-1][-1].rank == HIGH_ACE
+            if low_ace_used and high_ace_used:
+                if Deck.ACE_PREFERENCE == Deck.AcePreference.LOW:
+                    found_sequences.pop(-1)
+                if Deck.ACE_PREFERENCE == Deck.AcePreference.HIGH:
+                    found_sequences.pop(0)
+            elif high_ace_used and not low_ace_used:
+                found_sequences[-1][-1] = first_card # which must be an ace, because an ace is present
+            
+            straights.extend(found_sequences)
+
+            
 
         return len(straights) > 0, straights
     
@@ -205,6 +253,8 @@ def find_unique_sequences(master_sequence: List[int], sequence_length: int) -> L
             continue
         if master_sequence[i] - 1 == working_sequence[-1]:
             working_sequence.append(master_sequence[i])
+        else:
+            working_sequence = [master_sequence[i]]
         if len(working_sequence) == sequence_length:
             sequences.append(working_sequence)
             working_sequence = []

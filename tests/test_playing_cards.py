@@ -76,6 +76,18 @@ class TestDeckContainsStraights(unittest.TestCase):
         )
         self.assertTrue(deck.contains_straights()[0])
     
+    def test_deck_too_small_for_sequence_ThusFalse(self):
+        deck = Deck(Card(Suit.HEART, Rank.ACE))
+        self.assertFalse(deck.contains_straights()[0])
+    
+    def test_deck_hearts_nonsequential_values_ThusFalse(self):
+        deck = Deck(
+            Card(Suit.HEART, Rank.ACE),
+            Card(Suit.HEART, Rank.THREE),
+            Card(Suit.HEART, Rank.SEVEN),
+        )
+        self.assertFalse(deck.contains_straights()[0])
+    
     def test_deck_with_mixed_suits_ace_two_three_ThusFalse(self):
         deck = Deck(
             Card(Suit.CLUB, Rank.ACE),
@@ -83,16 +95,6 @@ class TestDeckContainsStraights(unittest.TestCase):
             Card(Suit.HEART, Rank.THREE)
         )
         self.assertFalse(deck.contains_straights()[0])
-
-    def test_resolves_False_1(self):
-        self.assertFalse(self.deck1.contains_straights()[0])
-
-    def test_resolves_False_2(self):
-        self.assertFalse(self.deck2.contains_straights()[0])
-
-    def test_resolves_True_1(self):
-        contains_straights, _ = self.deck3.contains_straights()
-        self.assertTrue(contains_straights)
 
 class TestFindUniqueSequences(unittest.TestCase):
 
@@ -122,5 +124,3 @@ class TestFindUniqueSequences(unittest.TestCase):
         unique_sequences = find_unique_sequences(sequence, 3)
         print(unique_sequences)
         self.assertEqual(len(unique_sequences), 0)
-
-
