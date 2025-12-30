@@ -95,32 +95,27 @@ class TestDeckContainsStraights(unittest.TestCase):
             Card(Suit.HEART, Rank.THREE)
         )
         self.assertFalse(deck.contains_straights()[0])
-
-class TestFindUniqueSequences(unittest.TestCase):
-
-    def test_resolves_True_1(self):
-        sequence = [0, 1, 2]
-        unique_sequences = find_unique_sequences(sequence, 3)
-        self.assertEqual(unique_sequences[0], sequence)
-
-    def test_resolves_True_2(self):
-        sequence = [4, 5, 6]
-        unique_sequences = find_unique_sequences(sequence, 3)
-        self.assertEqual(unique_sequences[0], sequence)
-
-    def test_resolves_True_3(self):
-        sequence = [4, 5, 6, 7, 8, 9]
-        unique_sequences = find_unique_sequences(sequence, 3)
-        print(unique_sequences)
-        self.assertEqual(unique_sequences, [[4, 5, 6], [7, 8, 9]])
     
-    def test_resolves_Equal_1(self):
-        sequence = [2, 3, 4]
-        unique_sequence = find_unique_sequences(sequence, 3)
-        self.assertEqual(len(unique_sequence), 1)
+    def test_deck_with_duplicate_and_sequence_of_number_cards_ThusTrue(self):
+        deck = Deck(
+            Card(Suit.HEART, Rank.TWO),
+            Card(Suit.HEART, Rank.TWO),
+            Card(Suit.HEART, Rank.THREE),
+            Card(Suit.HEART, Rank.THREE),
+            Card(Suit.HEART, Rank.FOUR),
+            Card(Suit.HEART, Rank.FOUR),
+        )
+        self.assertTrue(deck.contains_straights()[0])
 
-    def test_resolves_Equal_2(self):
-        sequence = [0, 2, 3]
-        unique_sequences = find_unique_sequences(sequence, 3)
-        print(unique_sequences)
-        self.assertEqual(len(unique_sequences), 0)
+class TestUniqueSequences(unittest.TestCase):
+    def test_new_1_2_3_len3_ThusTrue(self):
+        sequence, length = [1, 2, 3], 3
+        expected = [[1, 2, 3]]
+        actual = find_unique_sequences(sequence, length)
+        self.assertEqual(expected, actual)
+    
+    def test_new_12_13_14_len3_ThusTrue(self):
+        sequence, length = [12, 13, 14], 3 
+        expected = [sequence]
+        actual = find_unique_sequences(sequence, length)
+        self.assertEqual(expected, actual)

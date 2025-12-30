@@ -1,13 +1,14 @@
-import random, enum
+from random import shuffle
+from enum import Enum, IntEnum, auto
 from typing import List, Dict, Tuple
 
-class Suit(enum.Enum):
+class Suit(Enum):
     SPADE = "spade"
     HEART = "heart"
     CLUB = "club"
     DIAMOND = "diamond"
 
-class Rank(enum.IntEnum):
+class Rank(IntEnum):
     ACE = 1
     TWO = 2
     THREE = 3
@@ -22,10 +23,10 @@ class Rank(enum.IntEnum):
     QUEEN = 12
     KING = 13
 
-class SpecialRank(enum.IntEnum):
+class SpecialRank(IntEnum):
     ACEHIGH = 14
 
-RankType = Rank | SpecialRank
+RankType = Rank | SpecialRank # its hacky, but its the only way i could think to get high-ace support. and i might have to change it later!
 
 
 class Card:
@@ -53,13 +54,13 @@ class Card:
         return True if self.rank == Rank.ACE and other.rank == Rank.KING else self.rank > other.rank
     
 class Deck(List[Card]):
-    class AcePreference(enum.IntEnum):
-        LOW = enum.auto()
-        HIGH = enum.auto()
-    class AcesMode(enum.IntEnum):
-        LOW = enum.auto()
-        HIGH = enum.auto()
-        BOTH = enum.auto()
+    class AcePreference(IntEnum):
+        LOW = auto()
+        HIGH = auto()
+    class AcesMode(IntEnum):
+        LOW = auto()
+        HIGH = auto()
+        BOTH = auto()
     
     _ace_preference: AcePreference = AcePreference.LOW
     _aces_mode: AcesMode = AcesMode.BOTH
@@ -91,7 +92,7 @@ class Deck(List[Card]):
         return [f"{card}" for card in self]
 
     def shuffle(self) -> None:
-        random.shuffle(self)
+        shuffle(self)
 
     def draw(self, count: int = 1) -> List[Card]:
         """Will draw `count` cards from the top of the deck and return them as a list of `Card` objects. Will error if there are not enough cards in the deck."""
@@ -185,6 +186,8 @@ class Deck(List[Card]):
 
         **IMPORTANT**: If you want to customize how aces work, make sure you `Deck.set_aces_preference` and `Deck.set_aces_mode` before running `Deck.contains_straights`
 
+        **IMPORTANT**: Does NOT support duplicates... yet
+
         :param size_of_straight: The length of the straights to check for. Defaults to 3 to search for standard straights.
         :type size_of_straight: int (optional)
         :return: A tuple containing:
@@ -240,9 +243,12 @@ class Deck(List[Card]):
     
 class StandardDeck(Deck):
     def __init__(self) -> None:
-        super().__init__(*_standard_deck_generator())
+        super().__init__(*self._generator())
+    
+    def _generator(self) -> List[Card]:
+        return [Card(s, r) for s in Suit for r in Rank]
 
-def find_unique_sequences(master_sequence: List[int], sequence_length: int) -> List[List[int]]:
+def old_find_unique_sequences(master_sequence: List[int], sequence_length: int) -> List[List[int]]:
     """Takes a list of integers and returns a two-dimensional list of consecutive sequences of `sequence_length` length found in the list of integers. Expects the list to be sorted."""
     working_sequence: List[int] = []
     sequences: List[List[int]] = []
@@ -260,5 +266,15 @@ def find_unique_sequences(master_sequence: List[int], sequence_length: int) -> L
 
     return sequences
 
-def _standard_deck_generator() -> List[Card]:
-    return [Card(s, r) for s in Suit for r in Rank]
+def find_unique_sequences(master_sequence: List[int], sequence_length: int) -> List[List[int]]:
+    working_sequences: List[List[int]] =[[]]
+    for value in master_sequence:
+        next: List[int] = []
+        for sequence in working_sequences:
+            if len(sequence) == 0 or value - 1 == sequence[-1]: 
+                sequence.append(value)
+            else:
+                next.append(value)
+        working_sequences.extend([v] for v in next)
+    return [sequence[:sequence_length] for sequence in working_sequences if len(sequence) >= sequence_length]
+
