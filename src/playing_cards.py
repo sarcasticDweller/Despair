@@ -88,9 +88,6 @@ class Deck(List[Card]):
         """
         cls.ace_preference = preference
 
-    def get_list_of_cards_as_strings(self) -> List[str]: # this *heavily* resembles __repr__... should these be merged?
-        return [f"{card}" for card in self]
-
     def shuffle(self) -> None:
         shuffle(self)
 

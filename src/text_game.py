@@ -23,7 +23,7 @@ def game_loop() -> None:
         except:
             hand.extend(deck.empty_deck())
         
-        selected = ttui.multiple_choice_menu(f"Despair\n\nStats\nDiscard: {len(discard)}\nPlayed: {len(played_cards)}\nRemaining cards in deck: {len(deck)}\n\nSelect some cards to play", hand.get_list_of_cards_as_strings())
+        selected = ttui.multiple_choice_menu(f"Despair\n\nStats\nDiscard: {len(discard)}\nPlayed: {len(played_cards)}\nRemaining cards in deck: {len(deck)}\n\nSelect some cards to play", list(hand))
         considered_cards.extend(hand.draw_several_specific(selected))
         contains_pairs, pairs = considered_cards.contains_pairs()
         contains_straights, straights = considered_cards.contains_straights()
